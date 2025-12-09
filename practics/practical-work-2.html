@@ -207,7 +207,7 @@
 <body>
     <div class="container">
         <h1>Моделирование авиационно-транспортная системы</h1>
-        <div class="subtitle">Ввод параметров и визуализация динамики показателей X<sub>1</sub>-X<sub>9</sub></div>
+        <div class="subtitle">Ввод параметров и визуализация динамики показателей X<sub>1</sub>-X<sub>10</sub></div>
         
         <!-- Таблица 1: Вводимые значения Xn и максимальные значения -->
         <div class="section">
@@ -658,7 +658,7 @@
                         }
 
                         // Вычисляем новое значение Xn
-                        let newValue = xnOverTime[t-1][i] + change * 0.05;
+                        let newValue = xnOverTime[t-1][i] + change * 0.07;
 
                         // Ограничиваем максимальным значением
                         const maxValue = parseFloat(table1Data[i].max);
