@@ -5,8 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Моделирование характеристик хранилищ данных</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjs@11.11.0/lib/browser/math.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ode.js@1.0.0/ode.min.js"></script>
     <style>
+        .chart-wrapper {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .chart-wrapper.full-width {
+            width: 100%;
+        }
+
+        .chart-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .chart-subtitle {
+            color: #666;
+            margin-bottom: 10px;
+        }
         * {
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -206,13 +231,13 @@
 </head>
 <body>
     <div class="container">
-        <h1>Моделирование характеристик хранилищ данных</h1>
-        <div class="subtitle">Ввод параметров и визуализация динамики показателей X<sub>1</sub>-X<sub>14</sub></div>
+        <h1>Моделирование показателей хранилищ данных</h1>
+        <div class="subtitle">Ввод показателей и визуализация динамики показателей X<sub>1</sub>-X<sub>14</sub></div>
                 
         <!-- Таблица 1: Вводимые значения Xn и максимальные значения -->
         <div class="section">
-            <h2>Таблица 1: Начальные и максимальные значения характеристик X<sub>n</sub></h2>
-            <p>Введите начальные значения характеристик X<sub>n</sub> и их максимальные значения. X<sub>15</sub> добавлен для возможных расширений модели.</p>
+            <h2>Таблица 1: Начальные условия и максимальные значения показателей X<sub>n</sub></h2>
+            <p>Введите начальные условия показателей X<sub>n</sub> и их максимальные показатели.</p>
             <table id="table1">
                 <thead>
                     <tr>
@@ -230,8 +255,8 @@
         
         <!-- Таблица 2: Константные значения -->
         <div class="section">
-            <h2>Таблица 2: Константные значения параметров модели</h2>
-            <p>Введите значения констант, используемых в уравнениях модели.</p>
+            <h2>Таблица 2: Значения начальных возмущений параметров модели</h2>
+            <p>Введите значения начальных возмущений, используемых в уравнениях модели.</p>
             <table id="table2">
                 <thead>
                     <tr>
@@ -248,7 +273,7 @@
         
         <!-- Таблица 3: Функции -->
         <div class="section">
-            <h2>Таблица 3: Коэффициенты функций f(x) = a*x² + b*x + c</h2>
+            <h2>Таблица 3: Коэффициенты функций f(x) = a*x³ + b*x² + c*x + d</h2>
             <p>Введите коэффициенты для 150 функций, используемых в модели. Отображаются первые 5 функций, полный список доступен ниже.</p>
             <table id="table3">
                 <thead>
@@ -257,6 +282,7 @@
                         <th>Коэффициент a</th>
                         <th>Коэффициент b</th>
                         <th>Коэффициент c</th>
+                        <th>Коэффициент d</th>
                     </tr>
                 </thead>
                 <tbody id="table3-body">
@@ -264,9 +290,8 @@
                 </tbody>
             </table>
             
-            <div class="function-list" id="function-list">
-                <!-- Полный список функций будет сгенерирован JavaScript -->
-            </div>
+            <!-- <div class="function-list" id="function-list">
+            </div> -->
         </div>
         
         <!-- Кнопки управления -->
@@ -284,7 +309,9 @@
                 <!-- Графики будут сгенерированы JavaScript -->
             </div>
         </div>
-        
+
+        <canvas id="myChart" width="600" height="300"></canvas>
+
         <!-- Описание уравнений -->
         <div class="section">
             <h2>Уравнения изменений характеристик X<sub>n</sub></h2>
@@ -350,17 +377,16 @@
                 for (let i = 1; i < 15; i++) {
                     table1Data.push({
                         id: i,
-                        initial: i <= 14 ? (0.5 + Math.random() * 0.5).toFixed(2) : "0.00",
+                        initial: i <= 14 ? (0.5 + Math.random() * 0.3).toFixed(2) : "0.00",
                         max: (0.8 + Math.random() * 0.2).toFixed(2)
                     });
                 }
-                
-                // Таблица 2: Константные значения
+                // Таблица 2: Значения возмущения
                 table2Data = [];
                 constants.forEach((constant, index) => {
                     table2Data.push({
                         name: constant.name,
-                        value: (0.1 + Math.random() * 0.9).toFixed(2)
+                        value: (Math.random() * 0.3).toFixed(2)
                     });
                 });
                 
@@ -369,9 +395,10 @@
                 for (let i = 1; i <= 150; i++) {
                     table3Data.push({
                         id: i,
-                        a: (Math.random()).toFixed(3),
-                        b: (Math.random()).toFixed(3),
-                        c: (Math.random()).toFixed(3)
+                        a: (Math.random() * 0.2 - 0.1).toFixed(3),
+                        b: (Math.random() - 0.5).toFixed(3),
+                        c: (Math.random() * 2).toFixed(3),
+                        d: (Math.random()).toFixed(3)
                     });
                 }
                 
@@ -382,20 +409,21 @@
             function fillRandomData() {
                 // Таблица 1
                 table1Data.forEach(item => {
-                    item.initial = (Math.random()).toFixed(2);
+                    item.initial = (0.5 + Math.random() * 0.3).toFixed(2);
                     item.max = (0.7 + Math.random() * 0.3).toFixed(2);
                 });
-                
+                console.log(table1Data)
                 // Таблица 2
                 table2Data.forEach(item => {
-                    item.value = (Math.random()).toFixed(2);
+                    item.value = (Math.random() * 0.3).toFixed(2);
                 });
                 
                 // Таблица 3
                 table3Data.forEach(item => {
-                    item.a = (Math.random()).toFixed(3);
-                    item.b = (Math.random()).toFixed(3);
-                    item.c = (Math.random()).toFixed(3);
+                    item.a = (Math.random() * 0.2 - 0.1).toFixed(3);
+                    item.b = (Math.random() - 0.5).toFixed(3);
+                    item.c = (Math.random() * 2).toFixed(3);
+                    item.d = (Math.random()).toFixed(3);
                 });
                 
                 renderTables();
@@ -442,31 +470,37 @@
                 const table3Body = document.getElementById('table3-body');
                 table3Body.innerHTML = '';
                 
-                // Показываем только первые 5 функций в таблице
+                // Показываем все вспомогательные функции в таблице
                 for (let i = 0; i < 150; i++) {
                     const item = table3Data[i];
                     const row = document.createElement('tr');
                     
                     row.innerHTML = `
-                        <td>f<sub>${item.id}</sub>(x)</td>
-                        <td><input type="number" step="0.001" min="0" max="10" class="func-input" data-index="${i}" data-coeff="a" value="${item.a}"></td>
-                        <td><input type="number" step="0.001" min="0" max="10" class="func-input" data-index="${i}" data-coeff="b" value="${item.b}"></td>
-                        <td><input type="number" step="0.001" min="0" max="10" class="func-input" data-index="${i}" data-coeff="c" value="${item.c}"></td>
+                        <td>f<sub>${item.id}</sub>(x) = </td>
+                        <td><div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
+                                data-index="${i}" data-coeff="a" value="${item.a}">
+                            <div>·x³ + </div>
+                        </div></td>
+                        <td><div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
+                                data-index="${i}" data-coeff="a" value="${item.b}">
+                            <div>·x² + </div>
+                        </div></td>
+                        <td><div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
+                                data-index="${i}" data-coeff="a" value="${item.c}">
+                            <div>·x + </div>
+                        </div></td>
+                        <td><div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
+                                data-index="${i}" data-coeff="a" value="${item.d}">
+                            <div></div>
+                        </div></td>
                     `;
                     
                     table3Body.appendChild(row);
                 }
-                
-                // Полный список функций
-                const functionList = document.getElementById('function-list');
-                functionList.innerHTML = '';
-                
-                table3Data.forEach((item, index) => {
-                    const funcItem = document.createElement('div');
-                    funcItem.className = 'function-item';
-                    funcItem.innerHTML = `f<sub>${item.id}</sub>(x) = ${item.a}·x² + ${item.b}·x + ${item.c}`;
-                    functionList.appendChild(funcItem);
-                });
                 
                 // Добавляем обработчики событий для инпутов
                 addEventListeners();
@@ -480,11 +514,6 @@
                         const index = parseInt(this.dataset.index);
                         const type = this.dataset.type;
                         table1Data[index][type] = this.value;
-                        
-                        // Обновляем список функций, если нужно
-                        if (type === 'initial' && index === 0) {
-                            updateFunctionList();
-                        }
                     });
                 });
                 
@@ -502,38 +531,19 @@
                         const index = parseInt(this.dataset.index);
                         const coeff = this.dataset.coeff;
                         table3Data[index][coeff] = this.value;
-                        
-                        // Обновляем список функций
-                        updateFunctionList();
                     });
-                });
-            }
-            
-            // Обновление списка функций
-            function updateFunctionList() {
-                const functionList = document.getElementById('function-list');
-                functionList.innerHTML = '';
-                
-                table3Data.forEach((item, index) => {
-                    const funcItem = document.createElement('div');
-                    funcItem.className = 'function-item';
-                    funcItem.innerHTML = `f<sub>${item.id}</sub>(x) = ${item.a}·x² + ${item.b}·x + ${item.c}`;
-                    functionList.appendChild(funcItem);
                 });
             }
 
             function FValue(n,x){
                 // Проверка входных данных
                 if (x === undefined || x === null || isNaN(x)) {
-                    console.warn(`Invalid x value for F${index}: ${x}`);
+                    console.warn(`Invalid x value for F: ${x}`);
                     return 1; // нейтральное значение
                 }
                 
-                // Ваша логика вычисления f(index, x)
-                let result = parseFloat(table3Data[n].a * x * x + table3Data[n].b * x + table3Data[n].c)
-                
-                // Пример: сигмоидальная функция
-                // result = 1 / (1 + Math.exp(-x));
+                // логика вычисления f(index, x)
+                let result = parseFloat(table3Data[n].a * x * x * x + table3Data[n].b * x * x + table3Data[n].c * x + table3Data[n].d)
                 
                 // Защита от проблем
                 if (isNaN(result) || !isFinite(result)) {
@@ -547,236 +557,327 @@
                 
                 return result;
             }
+
             
-            // Расчет значений Xn в 5 временных точках
+
+            // Расчет значений Xn в временных точках
             function calculateXnValues() {
-                const timePoints = 5;
-                const xnCount = 14; // X1-X14
-                
-                // Получаем начальные значения Xn
-                const initialValues = table1Data.slice(0, xnCount).map(item => parseFloat(item.initial));
-                
-                // Получаем коэффициенты для вычисления
-                const const1 = parseFloat(table2Data[0].value); // ζ₁
-                const const2 = parseFloat(table2Data[1].value);  // ζ₂
-                const const3 = parseFloat(table2Data[2].value); // ζ₃
-                const const4 = parseFloat(table2Data[3].value); // ζ₄
-                const const5 = parseFloat(table2Data[4].value); // ζ₅
-                
-                // Массив для хранения значений Xn в 5 временных точках
-                const xnOverTime = Array.from({length: timePoints}, () => []);
-                
-                // Инициализируем начальные значения (t=0)
-                for (let i = 0; i < xnCount; i++) {
-                    xnOverTime[0][i] = initialValues[i];
+                const maxValues = [];
+                for (let i = 0; i < 14; i++) {
+                    maxValues.push(parseFloat(table1Data[i].max));
                 }
+                        
+                const xnCount = 14; // X1-X14
+                const initialValuesX = table1Data.slice(0, xnCount).map(item => parseFloat(item.initial));
                 
-                // Вычисляем значения для последующих временных точек
-                for (let t = 1; t < timePoints; t++) {
-                    for (let i = 0; i < xnCount; i++) {
-                        // Простая модель изменения Xn во времени
-                        // В реальной модели здесь использовались бы уравнения 2.9-2.21 из задания
+                // Дифференциальные функции изменения X1-X14
+                function cllculateX1(t, X1, othersArray){
+                    var calcVal = 1;
+                    for (let j = 0; j < xnCount; j++){
+                        //if (j===0) continue;
+                        const Xi = othersArray[j];
+
+                        calcVal *= FValue(j,Xi);
+                    }
+
+                    calcVal *= (zeta1(t) + zeta2(t) + zeta3(t) - zeta4(t) - zeta5(t))
+                    calcVal *= (0.1 / parseFloat(maxValues[0]))
+
+                    return calcVal;
+                }
+                function cllculateX2(t, X2, othersArray){
+                    var calcVal = 1;
+                    for (let j = 0; j < xnCount; j++){
+                        //if (j===1) continue;
+                        const Xi = othersArray[j];
+
+                        calcVal *= FValue(14+j,Xi);
+                    }
+
+                    calcVal *= (zeta1(t) + zeta2(t) + zeta3(t) - zeta4(t) - zeta5(t))
+                    calcVal *= (0.1 /  parseFloat(maxValues[1]))
+
+                    return calcVal;
+                }
+                function cllculateX3(t, X3, othersArray){
+                    var calcVal = 1;
+                    for (let j = 0; j < xnCount; j++){
+                        //if (j===2) continue;
+                        const Xi = othersArray[j];
+
+                        calcVal *= FValue(28 + j,Xi);
+                    }
+
+                    calcVal *= (zeta1(t) + zeta2(t) + zeta3(t) + zeta4(t) - zeta5(t))
+                    calcVal *= (0.1 /  parseFloat(maxValues[2]))
+
+                    return calcVal;
+                }
+                function cllculateX4(t, X4, othersArray){
+                    var calcVal = 1;
+                    for (let j = 0; j < xnCount; j++){
+                        if (j===4 || j===5 )continue
+                        const Xi = othersArray[j];
+
+                        calcVal *= FValue(42 + j,Xi);
+                    }
+
+                    calcVal *= zeta5(t)  
+                    calcVal -= (zeta1(t) + zeta2(t) + zeta3(t) + zeta4(t) + FValue(46, othersArray[4])) * FValue(47, othersArray[5])
+                    calcVal *= (0.1 / parseFloat(maxValues[3]))
+
+                    return calcVal;
+                }
+                function cllculateX5(t, X5, othersArray){
+                    var calcVal = 1;
+                    
+                    calcVal = (FValue(56,othersArray[3]) * FValue(57,othersArray[5]) * FValue(58,othersArray[8]) * FValue(59,othersArray[10]) * FValue(60,othersArray[12]))
+                    calcVal *= ((zeta1(t) + zeta2(t) + zeta4(t) + zeta5(t)) - zeta5(t))
+                    
+                    calcVal *= (0.1 / parseFloat(maxValues[4]))
+
+                    return calcVal;
+                }
+                function cllculateX6(t, X6, othersArray){
+                    var calcVal = 1;
+                    
+                    for (let j = 0; j < xnCount; j++){
+                        //if (j===5) continue;
+                        const Xi = othersArray[j];
+
+                        calcVal *= FValue(61 + j,Xi);
+                    }
+
+                    calcVal *=  (zeta1(t) + zeta2(t) - zeta5(t)) 
+                    
+                    calcVal *= (0.1 / parseFloat(maxValues[5]))
+
+                    return calcVal;
+                }
+                function cllculateX7(t, X7, othersArray){
+                    var calcVal = 1;
+                    
+                    calcVal *= (FValue(75,othersArray[1]) * FValue(76,othersArray[3]) * FValue(77,othersArray[13])) 
+                    calcVal -= zeta5(t)
+                    
+                    calcVal *= (0.1 / parseFloat(maxValues[6]))
+
+                    return calcVal;
+                }
+                function cllculateX8(t, X8, othersArray){
+                    var calcVal = 1;
+                    
+                    calcVal *= (FValue(75,othersArray[0]) * FValue(76,othersArray[1]) * FValue(77,othersArray[2]) * FValue(78,othersArray[3]) * FValue(79,othersArray[5]) * FValue(80,othersArray[8]) * FValue(81,othersArray[9]))
+                    calcVal *=  (zeta1(t) + zeta2(t) + zeta3(t))
+                    calcVal -= (zeta1(t) + zeta2(t))
+                    
+                    calcVal *= (0.1 / parseFloat(maxValues[7]))
+
+                    return calcVal;
+                }
+                function cllculateX9(t, X9, othersArray){
+                    var calcVal = 1;
+                    
+                    for (let j = 0; j < 7; j++){
+                        const Xi = othersArray[j];
+
+                        calcVal *= FValue(82 + j,Xi);
+                    }
+                    calcVal *= (FValue(89,othersArray[9]) * FValue(90,othersArray[10]) * FValue(91,othersArray[11]) * FValue(92,othersArray[12]) * FValue(93,othersArray[13]) )   
+                    calcVal *= (zeta4(t) + zeta5(t))
+                    calcVal -= (zeta1(t) + zeta2(t) + zeta3(t))
+                    
+                    calcVal *= (0.1 / parseFloat(maxValues[8]))
+
+                    return calcVal;
+                }
+                function cllculateX10(t, X10, othersArray){
+                    var calcVal = 1;
+                    
+                    for (let j = 0; j < 12; j++){
+                        // if (j===9) continue;
+                        // if (j===12 || j===13 )continue
                         
-                        // Базовое изменение (затухание + случайные флуктуации)
-                        let change = 0;
-                        
-                        // Влияние предыдущего значения
-                        // change += const4 * xnOverTime[t-1][i];
-                        
-                        let calcVal = 1;
-                        // Влияние других переменных (упрощенная модель)
-                        switch (i){
-                            case 0:
-                                // Вычисляем новое значение X1
-                                for (let j = 0; j < xnCount; j++){
-                                    if (j===i) continue;
-                                    
-                                    calcVal *= FValue(j,xnOverTime[t-1][j]);
-                                }
+                        const Xi = othersArray[j]
 
-                                calcVal *= (const1 + const2 + const3 - const4 - const5)
-                                calcVal /= parseFloat(table1Data[i].max)
+                        calcVal *= FValue(94 + j,Xi);
+                    }
 
-                                change += calcVal
-                                break;
-                            case 1:
-                                // Вычисляем новое значение X2
-                                for (let j = 0; j < xnCount; j++){
-                                    if (j===i) continue;
+                    calcVal *=  (zeta1(t) + zeta2(t))
+                    calcVal -= (zeta3(t) * FValue(106,othersArray[12])* FValue(107,othersArray[13])) 
+                    
+                    calcVal *= (0.1 / parseFloat(maxValues[9]))
 
-                                    calcVal *= FValue(14 + j,xnOverTime[t-1][j]);
-                                }
-                                calcVal *= (const1 + const2 + const3 + const4 - const5)
-                                calcVal /= parseFloat(table1Data[i].max)
+                    return calcVal;
+                }
+                function cllculateX11(t, X11, othersArray){
+                    var calcVal = 1;
+                    
+                    calcVal *= FValue(108,othersArray[0]) * FValue(109,othersArray[1]) * FValue(110,othersArray[2]) * FValue(111,othersArray[4]) * FValue(112,othersArray[7]) * FValue(113,othersArray[9]) * FValue(114,othersArray[11]) * FValue(115,othersArray[12]) * FValue(116,othersArray[13])
 
-                                change += calcVal
-                                break;
-                            case 2:
-                                // Вычисляем новое значение X3
-                                for (let j = 0; j < xnCount; j++){
-                                    if (j===i) continue;
+                    calcVal -= (FValue(117,othersArray[4])* FValue(118,othersArray[5]) * (zeta1(t) + zeta2(t) + zeta3(t) + zeta4(t) + zeta5(t)) )
 
-                                    calcVal *= FValue(28 + j,xnOverTime[t-1][j]);
-                                }
+                    
+                    calcVal *= (0.1 / parseFloat(maxValues[10]))
 
-                                calcVal *= (const1 + const2 + const3 + const4 - const5) 
-                                calcVal /= parseFloat(table1Data[i].max)
+                    return calcVal;
+                }
+                function cllculateX12(t, X12, othersArray){
+                    var calcVal = 1;
+                    
+                    for (let j = 0; j < 14; j++){
+                        const Xi = othersArray[j]
+                        calcVal *= FValue(119 + j,Xi);
+                    }
 
-                                change += calcVal
-                                break;
-                            case 3:
-                                // Вычисляем новое значение X4
-                                for (let j = 0; j < xnCount; j++){
-                                    //if (j===i) continue;
-                                    if (j===4 || j===5 )continue
+                    calcVal *= (zeta1(t) + zeta4(t) + zeta5(t))
+                    calcVal -= zeta3(t)
+                    
+                    calcVal *= (0.1 / parseFloat(maxValues[11]))
 
-                                    calcVal *= FValue(42 + j,xnOverTime[t-1][j]);
-                                }
+                    return calcVal;
+                }
+                function cllculateX13(t, X13, othersArray){
+                    var calcVal = 1;
+                    
+                    for (let j = 0; j < 8; j++){
+                        let Xi = othersArray[j]
+                        calcVal *= FValue(132 + j,Xi);
+                    }
 
-                                calcVal *=  (const5) 
-                                calcVal -= (const1 + const2 + const3 + const4 + FValue(46,xnOverTime[t-1][4])* FValue(47,xnOverTime[t-1][5])) 
-                                calcVal /= parseFloat(table1Data[i].max)
+                    calcVal *= FValue(140,othersArray[9]) * FValue(141,othersArray[10]) * FValue(142,othersArray[11]) * FValue(143,othersArray[12]) * FValue(144,othersArray[13])
+                    calcVal -= FValue(145,othersArray[8]) * (zeta1(t) + zeta2(t) + zeta3(t) + zeta4(t) + zeta5(t)) 
+                    
+                    calcVal *= (0.1 / parseFloat(maxValues[12]))
 
-                                change += calcVal
-                                break;
-                            case 4:
-                                // Вычисляем новое значение X5
-                                calcVal = (FValue(56,xnOverTime[t-1][3]) * FValue(57,xnOverTime[t-1][5]) * FValue(58,xnOverTime[t-1][8]) * FValue(59,xnOverTime[t-1][10]) * FValue(60,xnOverTime[t-1][12]))
-                                calcVal *= (const1 + const2 + const4 +  const5)
-                                calcVal -= const5
-                                calcVal /= parseFloat(table1Data[i].max)
-                                change += calcVal
-                                break;
-                            case 5:
-                                // Вычисляем новое значение X6
-                                for (let j = 0; j < xnCount; j++){
-                                    if (j===i) continue;
+                    return calcVal;
+                }
+                function cllculateX14(t, X14, othersArray){
+                    var calcVal = 1;
+                    
+                    calcVal *= FValue(146 ,othersArray[4]) * FValue(147 ,othersArray[6]) * FValue(148,othersArray[10]) * FValue(149 ,othersArray[12])
 
-                                    calcVal *= FValue(61 + j,xnOverTime[t-1][j]);
-                                }
+                    calcVal -= (zeta1(t) + zeta2(t) + zeta3(t) + zeta4(t) + zeta5(t))
+                    
+                    calcVal *= (0.1 / parseFloat(maxValues[13]))
 
-                                calcVal *=  (const1 + const2) 
-                                calcVal -= (const5)
-                                calcVal /= parseFloat(table1Data[i].max)
+                    return calcVal;
+                }
 
-                                change += calcVal
-                                break;
-                            case 6:
-                                // Вычисляем новое значение X7
-                                calcVal = (FValue(75,xnOverTime[t-1][1]) * FValue(76,xnOverTime[t-1][3]) * FValue(77,xnOverTime[t-1][13]))
-                                calcVal -= const5
-                                calcVal /= parseFloat(table1Data[i].max)
-                                change += calcVal
-                                break;
-                            case 7:
-                                // Вычисляем новое значение X8
-                                calcVal = (FValue(75,xnOverTime[t-1][0]) * FValue(76,xnOverTime[t-1][1]) * FValue(77,xnOverTime[t-1][2]) * FValue(78,xnOverTime[t-1][3]) * FValue(79,xnOverTime[t-1][5]) * FValue(80,xnOverTime[t-1][8]) * FValue(81,xnOverTime[t-1][9]))
-                                calcVal *=  (const1 + const2 + const3) 
-                                calcVal -= const1 + const2
-                                calcVal /= parseFloat(table1Data[i].max)
-                                change += calcVal
-                                break;
-                            case 8:
-                                // Вычисляем новое значение X9
-                                for (let j = 0; j < 7; j++){
-                                    //if (j===i) continue;
-                                    //if (j===4 || j===5 )continue
+                function f_dopri(t, y){
+                    return [ cllculateX1(t, y[0], initialValuesX), cllculateX2(t, y[1], initialValuesX), cllculateX3(t, y[2], initialValuesX), cllculateX4(t, y[3], initialValuesX),
+                cllculateX5(t, y[4], initialValuesX), cllculateX6(t, y[5], initialValuesX), cllculateX7(t, y[6], initialValuesX), cllculateX8(t, y[7], initialValuesX),
+                cllculateX9(t, y[8], initialValuesX), cllculateX10(t, y[9], initialValuesX), cllculateX11(t, y[10], initialValuesX), cllculateX12(t, y[11], initialValuesX),
+                cllculateX13(t, y[12], initialValuesX), cllculateX14(t, y[13], initialValuesX)
+                ];
+                }
+                const tol = 1e-12;
 
-                                    calcVal *= FValue(82 + j,xnOverTime[t-1][j]);
-                                }
-                                calcVal *= (FValue(89,xnOverTime[t-1][9]) * FValue(90,xnOverTime[t-1][10]) * FValue(91,xnOverTime[t-1][11]) * FValue(92,xnOverTime[t-1][12]) * FValue(93,xnOverTime[t-1][13]) )   
-                                calcVal *= (const4 + const5) 
-                                calcVal -= (const1 + const2 + const3) 
-                                calcVal /= parseFloat(table1Data[i].max)
+                const { solveODE } = math;
 
-                                change += calcVal
-                                break;
-                            case 9:
-                                // Вычисляем новое значение X10
-                                for (let j = 0; j < xnCount; j++){
-                                    if (j===i) continue;
-                                    if (j===12 || j===13 )continue
+                const tspan1 = [0, 1];
 
-                                    calcVal *= FValue(94 + j,xnOverTime[t-1][j]);
-                                }
+                const sol1 = solveODE(f_dopri, tspan1, initialValuesX, { method: 'RK45', tol: 1e-6, maxStep: 0.2});
+                console.log(sol1);
+                
+                const timePoints = 5;
 
-                                calcVal *=  (const1 + const2) 
-                                calcVal -= (const3 * FValue(106,xnOverTime[t-1][12])* FValue(107,xnOverTime[t-1][13])) 
-                                calcVal /= parseFloat(table1Data[i].max)
+                const xnOverTime = Array.from({length: timePoints}, () => []);
 
-                                change += calcVal
-                                break;
-                            case 10:
-                                // Вычисляем новое значение X11
-                                for (let j = 0; j < 9; j++){
-                                    if (j===i) continue;
-                                    if (j===12 || j===13 )continue
+                let count = 0;
 
-                                    calcVal *= FValue(108 + j,xnOverTime[t-1][j]);
-                                }
-
-                                calcVal -= ((const1 + const2 + const3 + const4 + const5) * FValue(117,xnOverTime[t-1][4])* FValue(118,xnOverTime[t-1][5]))
-
-                                calcVal /= parseFloat(table1Data[i].max)
-
-                                change += calcVal
-                                break;
-                            case 11:
-                                // Вычисляем новое значение X12
-                                for (let j = 0; j < 12; j++){
-
-                                    calcVal *= FValue(119 + j,xnOverTime[t-1][j]);
-                                }
-
-                                calcVal *=  (const1 + const4 + const5) * FValue(130,xnOverTime[t-1][12]) * FValue(131,xnOverTime[t-1][13]) 
-                                calcVal -= (const3) 
-                                calcVal /= parseFloat(table1Data[i].max)
-
-                                change += calcVal
-                                break;
-                            case 12:
-                                // Вычисляем новое значение X13
-                                for (let j = 0; j < 12; j++){
-                                    if (i === 8) continue
-                                    calcVal *= FValue(132 + j,xnOverTime[t-1][j]);
-                                }
-
-                                calcVal -= (const1 + const2 + const3 + const4 + const5) * FValue(145,xnOverTime[t-1][8]) 
-                                calcVal /= parseFloat(table1Data[i].max)
-
-                                change += calcVal
-                                break;
-                            case 13:
-                                // Вычисляем новое значение X14
-                                calcVal *= FValue(146 ,xnOverTime[t-1][4]) * FValue(147 ,xnOverTime[t-1][6]) * FValue(148,xnOverTime[t-1][10]) * FValue(149 ,xnOverTime[t-1][12])
-
-                                calcVal -= (const1 + const2 + const3 + const4 + const5) 
-                                calcVal /= parseFloat(table1Data[i].max)
-
-                                change += calcVal
-                                break;
-                        }
-
-                        // Вычисляем новое значение Xn
-                        let newValue = xnOverTime[t-1][i] + change * 0.05;
-
-                        // Ограничиваем максимальным значением
-                        const maxValue = parseFloat(table1Data[i].max);
-                        newValue = Math.min(maxValue, newValue);
-                        
-
-                        // Ограничиваем минимальным значением 0
-                        newValue = Math.max(0, newValue);
-                        
-                        xnOverTime[t][i] = parseFloat(newValue.toFixed(3));
+                for (let u = 0;u<sol1.t.length;u++){
+                    if ( sol1.t[u] === 0 ||
+                    sol1.t[u]> 0.19 && sol1.t[u]<0.200001 ||
+                    sol1.t[u]> 0.39 && sol1.t[u]<0.41 ||
+                    sol1.t[u]> 0.59 && sol1.t[u]<0.61 ||
+                    sol1.t[u]>= 0.8
+                    )
+                    {
+                        xnOverTime[count] = sol1.y[count];
+                        count++;
+                        if (count === 5) break
                     }
                 }
+
+                //Функция numeric.dopri -численное интегрирование ОДУ с использованием метода Дорманда–Принса Рунге–Кутта
+                //const solver = numeric.dopri(0, 100, initialValuesX, f_dopri, tol, 100000);
                 
                 return xnOverTime;
             }
+
+            /////////////////
+           
+
             
-            // Создание лепестковых графиков
-            function createRadarCharts(xnOverTime) {
+            // Создание лепестковых и линейного графиков
+            function createCharts(xnOverTime) {
+                let selectedTimes = ['t=0 (начало)', 't=1', 't=2', 't=3', 't=4']
+                const ctx = document.getElementById('myChart').getContext('2d');
+
+                // Количество переменных (длина внутреннего массива)
+                const varCount = xnOverTime[0].length;
+
+                // названия временных точек
+                const labels = selectedTimes;
+
+                // набор цветов (если переменных много — цвета циклически повторяются)
+                const colors = [
+                    'red', 'blue', 'green', 'orange', 'purple',
+                    'brown', 'pink', 'cyan', 'magenta', 'olive',
+                    "LightGreen","Aqua","Khaki","SteelBlue"
+                ];
+
+                // Формируем наборы данных для Chart.js
+                let datasets = [];
+
+                for (let v = 0; v < varCount; v++) {
+
+                    // Берём все значения x_v(t_i) для переменной v
+                    const dataV = xnOverTime.map(row => row[v]);
+
+                    datasets.push({
+                        label: `X${v+1}(t)`,
+                        data: dataV,
+                        fill: false,
+                        borderColor: colors[v % colors.length],
+                        borderWidth: 2,
+                        tension: 0.2
+                    });
+                }
+
+                // Строим график
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top'
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Время t'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Значение переменных'
+                                }
+                            }
+                        }
+                    }
+                });
+
+
                 const chartsContainer = document.getElementById('charts-container');
                 chartsContainer.innerHTML = '';
                 
@@ -825,6 +926,8 @@
                     // Находим максимальное из максимальных значений для масштаба графика
                     const overallMax = Math.max(...maxValues);
                     
+                  
+
                     // Создаем график
                     const ctx = canvas.getContext('2d');
                     new Chart(ctx, {
@@ -910,10 +1013,13 @@
                 }
             }
             
+            ////
+            ////
             // Обработчики кнопок
             document.getElementById('calculate-btn').addEventListener('click', function() {
                 const xnOverTime = calculateXnValues();
-                createRadarCharts(xnOverTime);
+                createCharts(xnOverTime);
+                
                 
                 // Прокрутка к графикам
                 document.querySelector('.section:nth-last-child(2)').scrollIntoView({
@@ -932,10 +1038,41 @@
             // Инициализация при загрузке
             initDefaultData();
             
+            
+            for (let i=0; i<table2Data.length;i++){
+                console.log(table2Data[i].value);
+            }
+
+            function zeta1(t){
+                current_sources = parseFloat(table2Data[0].value) + 0.01 * t * 100
+                z1 = current_sources 
+                return Math.min(Math.max(z1, 0), 1)
+            }
+            function zeta2(t){
+                current_sources = parseFloat(table2Data[1].value) + 0.01 * t * 100
+                z1 = current_sources 
+                return Math.min(Math.max(z1, 0), 1)
+            }
+            function zeta3(t){
+                current_sources = parseFloat(table2Data[2].value) + 0.01 * t * 100
+                z1 = current_sources 
+                return Math.min(Math.max(z1, 0), 1)
+            }
+            function zeta4(t){
+                current_sources = parseFloat(table2Data[3].value) + 0.01 * t * 100
+                z1 = current_sources 
+                return Math.min(Math.max(z1, 0), 1)
+            }
+            function zeta5(t){
+                current_sources = parseFloat(table2Data[4].value) + 0.01 * t * 100
+                z1 = current_sources
+                return Math.min(Math.max(z1, 0), 1)
+            }
+
             // Автоматический расчет при загрузке
             setTimeout(() => {
                 const xnOverTime = calculateXnValues();
-                createRadarCharts(xnOverTime);
+                createCharts(xnOverTime);
             }, 500);
         });
     </script>
