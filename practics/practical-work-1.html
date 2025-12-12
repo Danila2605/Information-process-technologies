@@ -684,7 +684,7 @@
 
                     maxValues[2] = Math.max(othersArray[2] + calcVal/ parseFloat(maxValues[2]), maxValues[2])
 
-                    calcVal *= (1 /  parseFloat(maxValues[2]))
+                    calcVal *= (0.1 /  parseFloat(maxValues[2]))
 
                     return calcVal;
                 }
@@ -913,7 +913,22 @@
                         break
                     }
                 }
-                
+
+                let maxs = []
+
+                for (let i=0;i<6;i++){
+                    let max = 0
+                    for (let p=0;p<14;p++){
+                        
+                        max = Math.max(parseFloat(xnOverTime[i][p]), max)
+                    }
+                    maxs[i] = max
+                }
+                for (let o=0;o<6;o++){
+                    for (let d=0;d<14;d++){
+                        if (maxs[o] > 1) xnOverTime[o][d] = parseFloat(xnOverTime[o][d]) / maxs[o]
+                    }
+                }
                 
                 return xnOverTime;
             }
