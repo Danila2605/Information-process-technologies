@@ -6,7 +6,6 @@
     <title>Моделирование характеристик хранилищ данных</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mathjs@11.11.0/lib/browser/math.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ode.js@1.0.0/ode.min.js"></script>
     <style>
         .chart-wrapper {
@@ -255,8 +254,8 @@
         
         <!-- Таблица 2: Константные значения -->
         <div class="section">
-            <h2>Таблица 2: Значения начальных возмущений параметров модели</h2>
-            <p>Введите значения начальных возмущений, используемых в уравнениях модели.</p>
+            <h2>Таблица 2: Значения возмущений параметров модели</h2>
+            <p>Введите значения возмущений, используемых в уравнениях модели.</p>
             <table id="table2">
                 <thead>
                     <tr>
@@ -289,11 +288,24 @@
                     <!-- Данные будут сгенерированы JavaScript -->
                 </tbody>
             </table>
-            
-            <!-- <div class="function-list" id="function-list">
-            </div> -->
+        
         </div>
         
+        <div class="section">
+            <table id="table4">
+                <thead>
+                    <tr>
+                        <th>Параметр</th>
+                        <th>Максимальное ограничение</th>
+                        <th>Минимальное ограничение</th>
+                    </tr>
+                </thead>
+                <tbody id="table4-body">
+                    <!-- Данные будут сгенерированы JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
         <!-- Кнопки управления -->
         <div class="button-container">
             <button id="calculate-btn">Рассчитать динамику показателей</button>
@@ -369,6 +381,7 @@
             let table1Data = [];
             let table2Data = [];
             let table3Data = [];
+            let table4Data = [];
             
             // Инициализация данных по умолчанию
             function initDefaultData() {
@@ -395,12 +408,23 @@
                 for (let i = 1; i <= 150; i++) {
                     table3Data.push({
                         id: i,
-                        a: (Math.random() * 0.2 - 0.1).toFixed(3),
-                        b: (Math.random() - 0.5).toFixed(3),
-                        c: (Math.random() * 2).toFixed(3),
+                        a: (Math.random() * 10 - 0.1).toFixed(3),
+                        b: (Math.random() * 10).toFixed(3),
+                        c: (Math.random() * 10).toFixed(3),
                         d: (Math.random()).toFixed(3)
                     });
                 }
+                // Таблица 4:
+                table4Data = [];
+                for (let i = 0; i < 14; i++) {
+                    table4Data.push({
+                        id: i,
+                        name: "X" + (i+1),
+                        max: Math.min((0.8 + Math.random() * 0.2).toFixed(4), parseFloat(table1Data[i].max)),
+                        min: (Math.random() * 0.2).toFixed(4)
+                    });
+                }
+                
                 
                 renderTables();
             }
@@ -420,11 +444,20 @@
                 
                 // Таблица 3
                 table3Data.forEach(item => {
-                    item.a = (Math.random() * 0.2 - 0.1).toFixed(3);
-                    item.b = (Math.random() - 0.5).toFixed(3);
-                    item.c = (Math.random() * 2).toFixed(3);
-                    item.d = (Math.random()).toFixed(3);
+                    item.a = (Math.random() * 10 - 0.1).toFixed(3);
+                    item.b = (Math.random() * 10).toFixed(3);
+                    item.c = (Math.random() * 10).toFixed(3);
+                    item.d = (Math.random() * 10).toFixed(3);
                 });
+                // Таблица 4
+                for (let i = 0; i < 14; i++) {
+                    table4Data.push({
+                        id: i,
+                        name: "X" + (i),
+                        max: Math.min((0.8 + Math.random() * 0.2).toFixed(4), parseFloat(table1Data[i].max)),
+                        min: (Math.random() * 0.2).toFixed(4)
+                    });
+                }
                 
                 renderTables();
             }
@@ -469,28 +502,28 @@
                 // Таблица 3
                 const table3Body = document.getElementById('table3-body');
                 table3Body.innerHTML = '';
-                
+                let fig = ["₁","₂","₃","₄","₅","₆","₇","₈","₉","₁₀","₁₁","₁₂","₁₃","₁₄"];
                 // Показываем все вспомогательные функции в таблице
                 for (let i = 0; i < 150; i++) {
                     const item = table3Data[i];
                     const row = document.createElement('tr');
                     
                     row.innerHTML = `
-                        <td>f<sub>${item.id}</sub>(x) = </td>
+                        <td>f<sub>${item.id}</sub>(x${fig[i%14]}) = </td>
                         <td><div style="display: flex; align-items: center; gap: 4px;">
                             <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
                                 data-index="${i}" data-coeff="a" value="${item.a}">
-                            <div>·x³ + </div>
+                            <div>·x${fig[i%14]}³ + </div>
                         </div></td>
                         <td><div style="display: flex; align-items: center; gap: 4px;">
                             <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
                                 data-index="${i}" data-coeff="a" value="${item.b}">
-                            <div>·x² + </div>
+                            <div>·x${fig[i%14]}² + </div>
                         </div></td>
                         <td><div style="display: flex; align-items: center; gap: 4px;">
                             <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
                                 data-index="${i}" data-coeff="a" value="${item.c}">
-                            <div>·x + </div>
+                            <div>·x${fig[i%14]} + </div>
                         </div></td>
                         <td><div style="display: flex; align-items: center; gap: 4px;">
                             <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
@@ -501,6 +534,26 @@
                     
                     table3Body.appendChild(row);
                 }
+
+                // Таблица 4
+                const table4Body = document.getElementById('table4-body');
+                table4Body.innerHTML = '';
+                
+                for (let i=0;i<14;i++){
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td>${table4Data[i].name}</td>
+                        <td><div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="number" step="0.001" min="0" max="10" class="max-input" style="width: 150px" 
+                        data-index="${i}" data-coeff="a" value="${table4Data[i].max}"></td>
+                        <td><div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="number" step="0.001" min="0" max="10" class="min-input" style="width: 150px" 
+                        data-index="${i}" data-coeff="a" value="${table4Data[i].min}"></td>
+                    `;
+                    
+                    table4Body.appendChild(row);
+                };
                 
                 // Добавляем обработчики событий для инпутов
                 addEventListeners();
@@ -533,6 +586,20 @@
                         table3Data[index][coeff] = this.value;
                     });
                 });
+
+                // Обработчики для таблицы 4
+                document.querySelectorAll('.max-input').forEach(input => {
+                    input.addEventListener('change', function() {
+                        const index = parseInt(this.dataset.index);
+                        table4Data[index].max = this.value;
+                    });
+                });
+                document.querySelectorAll('.min-input').forEach(input => {
+                    input.addEventListener('change', function() {
+                        const index = parseInt(this.dataset.index);
+                        table4Data[index].min = this.value;
+                    });
+                });
             }
 
             function FValue(n,x){
@@ -552,8 +619,8 @@
                 }
                 
                 // Ограничение диапазона
-                if (result < 1e-10) result = 1e-10;
-                if (result > 1e10) result = 1e10;
+                // if (result < 1e-10) result = 1e-10;
+                // if (result > 1e10) result = 1e10;
                 
                 return result;
             }
@@ -581,6 +648,9 @@
                     }
 
                     calcVal *= (zeta1(t) + zeta2(t) + zeta3(t) - zeta4(t) - zeta5(t))
+
+                    maxValues[0] = Math.max(othersArray[0] + calcVal/ parseFloat(maxValues[0]), maxValues[0])
+
                     calcVal *= (0.1 / parseFloat(maxValues[0]))
 
                     return calcVal;
@@ -595,6 +665,9 @@
                     }
 
                     calcVal *= (zeta1(t) + zeta2(t) + zeta3(t) - zeta4(t) - zeta5(t))
+
+                    maxValues[1] = Math.max(othersArray[1] + calcVal/ parseFloat(maxValues[1]), maxValues[1])
+
                     calcVal *= (0.1 /  parseFloat(maxValues[1]))
 
                     return calcVal;
@@ -604,12 +677,14 @@
                     for (let j = 0; j < xnCount; j++){
                         //if (j===2) continue;
                         const Xi = othersArray[j];
-
                         calcVal *= FValue(28 + j,Xi);
                     }
 
                     calcVal *= (zeta1(t) + zeta2(t) + zeta3(t) + zeta4(t) - zeta5(t))
-                    calcVal *= (0.1 /  parseFloat(maxValues[2]))
+
+                    maxValues[2] = Math.max(othersArray[2] + calcVal/ parseFloat(maxValues[2]), maxValues[2])
+
+                    calcVal *= (1 /  parseFloat(maxValues[2]))
 
                     return calcVal;
                 }
@@ -624,6 +699,9 @@
 
                     calcVal *= zeta5(t)  
                     calcVal -= (zeta1(t) + zeta2(t) + zeta3(t) + zeta4(t) + FValue(46, othersArray[4])) * FValue(47, othersArray[5])
+
+                    maxValues[3] = Math.max(othersArray[3] + calcVal/ parseFloat(maxValues[3]), maxValues[3])
+
                     calcVal *= (0.1 / parseFloat(maxValues[3]))
 
                     return calcVal;
@@ -634,6 +712,8 @@
                     calcVal = (FValue(56,othersArray[3]) * FValue(57,othersArray[5]) * FValue(58,othersArray[8]) * FValue(59,othersArray[10]) * FValue(60,othersArray[12]))
                     calcVal *= ((zeta1(t) + zeta2(t) + zeta4(t) + zeta5(t)) - zeta5(t))
                     
+                    maxValues[4] = Math.max(othersArray[4] + calcVal/ parseFloat(maxValues[4]), maxValues[4])
+
                     calcVal *= (0.1 / parseFloat(maxValues[4]))
 
                     return calcVal;
@@ -650,6 +730,8 @@
 
                     calcVal *=  (zeta1(t) + zeta2(t) - zeta5(t)) 
                     
+                    maxValues[5] = Math.max(othersArray[5] + calcVal/ parseFloat(maxValues[5]), maxValues[5])
+
                     calcVal *= (0.1 / parseFloat(maxValues[5]))
 
                     return calcVal;
@@ -659,6 +741,8 @@
                     
                     calcVal *= (FValue(75,othersArray[1]) * FValue(76,othersArray[3]) * FValue(77,othersArray[13])) 
                     calcVal -= zeta5(t)
+
+                    maxValues[6] = Math.max(othersArray[6] + calcVal/ parseFloat(maxValues[6]), maxValues[6])
                     
                     calcVal *= (0.1 / parseFloat(maxValues[6]))
 
@@ -671,6 +755,8 @@
                     calcVal *=  (zeta1(t) + zeta2(t) + zeta3(t))
                     calcVal -= (zeta1(t) + zeta2(t))
                     
+                    maxValues[7] = Math.max(othersArray[7] + calcVal/ parseFloat(maxValues[7]), maxValues[7])
+
                     calcVal *= (0.1 / parseFloat(maxValues[7]))
 
                     return calcVal;
@@ -687,6 +773,8 @@
                     calcVal *= (zeta4(t) + zeta5(t))
                     calcVal -= (zeta1(t) + zeta2(t) + zeta3(t))
                     
+                    maxValues[8] = Math.max(othersArray[8] + calcVal/ parseFloat(maxValues[8]), maxValues[8])
+
                     calcVal *= (0.1 / parseFloat(maxValues[8]))
 
                     return calcVal;
@@ -706,6 +794,8 @@
                     calcVal *=  (zeta1(t) + zeta2(t))
                     calcVal -= (zeta3(t) * FValue(106,othersArray[12])* FValue(107,othersArray[13])) 
                     
+                    maxValues[9] = Math.max(othersArray[9] + calcVal/ parseFloat(maxValues[9]), maxValues[9])
+
                     calcVal *= (0.1 / parseFloat(maxValues[9]))
 
                     return calcVal;
@@ -717,7 +807,8 @@
 
                     calcVal -= (FValue(117,othersArray[4])* FValue(118,othersArray[5]) * (zeta1(t) + zeta2(t) + zeta3(t) + zeta4(t) + zeta5(t)) )
 
-                    
+                    maxValues[10] = Math.max(othersArray[10] + calcVal/ parseFloat(maxValues[10]), maxValues[10])
+
                     calcVal *= (0.1 / parseFloat(maxValues[10]))
 
                     return calcVal;
@@ -732,6 +823,8 @@
 
                     calcVal *= (zeta1(t) + zeta4(t) + zeta5(t))
                     calcVal -= zeta3(t)
+
+                    maxValues[11] = Math.max(othersArray[11] + calcVal/ parseFloat(maxValues[11]), maxValues[11])
                     
                     calcVal *= (0.1 / parseFloat(maxValues[11]))
 
@@ -748,6 +841,8 @@
                     calcVal *= FValue(140,othersArray[9]) * FValue(141,othersArray[10]) * FValue(142,othersArray[11]) * FValue(143,othersArray[12]) * FValue(144,othersArray[13])
                     calcVal -= FValue(145,othersArray[8]) * (zeta1(t) + zeta2(t) + zeta3(t) + zeta4(t) + zeta5(t)) 
                     
+                    maxValues[12] = Math.max(othersArray[12] + calcVal/ parseFloat(maxValues[12]), maxValues[12])
+
                     calcVal *= (0.1 / parseFloat(maxValues[12]))
 
                     return calcVal;
@@ -759,6 +854,8 @@
 
                     calcVal -= (zeta1(t) + zeta2(t) + zeta3(t) + zeta4(t) + zeta5(t))
                     
+                    maxValues[13] = Math.max(othersArray[13] + calcVal/ parseFloat(maxValues[13]), maxValues[13])
+
                     calcVal *= (0.1 / parseFloat(maxValues[13]))
 
                     return calcVal;
@@ -780,7 +877,7 @@
                 const sol1 = solveODE(f_dopri, tspan1, initialValuesX, { method: 'RK45', tol: 1e-6, maxStep: 0.2});
                 console.log(sol1);
                 
-                const timePoints = 5;
+                const timePoints = 6;
 
                 const xnOverTime = Array.from({length: timePoints}, () => []);
 
@@ -794,27 +891,46 @@
                     sol1.t[u]>= 0.8
                     )
                     {
-                        xnOverTime[count] = sol1.y[count];
+                        let val = sol1.y[count]
+                        for (let r=0;r<val.length;r++){
+                            val[r] = Math.max(val[r], parseFloat(table4Data[r].min))
+                            val[r] = Math.min(val[r], parseFloat(table4Data[r].max))
+                        }
+                        xnOverTime[count] = val;
                         count++;
                         if (count === 5) break
                     }
                 }
-
-                //Функция numeric.dopri -численное интегрирование ОДУ с использованием метода Дорманда–Принса Рунге–Кутта
-                //const solver = numeric.dopri(0, 100, initialValuesX, f_dopri, tol, 100000);
+                for (let u = 0;u<sol1.t.length;u++){
+                    if ( sol1.t[u] === 1)
+                    {
+                        let val = sol1.y[count]
+                        for (let r=0;r<val.length;r++){
+                            val[r] = Math.max(val[r], parseFloat(table4Data[r].min))
+                            val[r] = Math.min(val[r], parseFloat(table4Data[r].max))
+                        }
+                        xnOverTime[5] = val
+                        break
+                    }
+                }
+                
                 
                 return xnOverTime;
             }
 
             /////////////////
            
-
+            let chart;
             
             // Создание лепестковых и линейного графиков
             function createCharts(xnOverTime) {
-                let selectedTimes = ['t=0 (начало)', 't=1', 't=2', 't=3', 't=4']
-                const ctx = document.getElementById('myChart').getContext('2d');
+                if (chart) {
+                    chart.destroy(); // Уничтожаем предыдущий график
+                }
 
+                let selectedTimes = ['t=0 (начало)', 't=0.2', 't=0.4', 't=0.6', 't=0.8', 't=1']
+                const ctx = document.getElementById('myChart').getContext('2d');
+                
                 // Количество переменных (длина внутреннего массива)
                 const varCount = xnOverTime[0].length;
 
@@ -847,7 +963,7 @@
                 }
 
                 // Строим график
-                new Chart(ctx, {
+                chart = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: labels,
@@ -857,7 +973,7 @@
                         responsive: true,
                         plugins: {
                             legend: {
-                                position: 'top'
+                                position: 'right',
                             }
                         },
                         scales: {
@@ -881,7 +997,7 @@
                 const chartsContainer = document.getElementById('charts-container');
                 chartsContainer.innerHTML = '';
                 
-                const timeLabels = ['t=0 (начало)', 't=1', 't=2', 't=3', 't=4'];
+                const timeLabels = ['t=0 (начало)', 't=0.2', 't=0.4', 't=0.6', 't=0.8', 't=1'];
                 const xnLabels = Array.from({length: 14}, (_, i) => `X${i+1}`);
                 
                 // Цвета для графиков
@@ -890,11 +1006,12 @@
                     'rgba(65, 105, 225, 0.7)',
                     'rgba(70, 130, 180, 0.7)',
                     'rgba(100, 149, 237, 0.7)',
-                    'rgba(30, 144, 255, 0.7)'
+                    'rgba(30, 144, 255, 0.7)',
+                    'rgba(90, 144, 255, 0.7)'
                 ];
                 
                 // Создаем 5 графиков для каждого момента времени
-                for (let t = 0; t < 5; t++) {
+                for (let t = 0; t < 6; t++) {
                     const chartWrapper = document.createElement('div');
                     chartWrapper.className = 'chart-wrapper';
                     
@@ -922,6 +1039,11 @@
                     for (let i = 0; i < 14; i++) {
                         maxValues.push(parseFloat(table1Data[i].max));
                     }
+
+                    const maxC = []
+                    for (let i = 0; i < 14; i++) {
+                        maxC.push(parseFloat(table4Data[i].max));
+                    }
                     
                     // Находим максимальное из максимальных значений для масштаба графика
                     const overallMax = Math.max(...maxValues);
@@ -939,9 +1061,9 @@
                                     label: `Текущие значения X₁-X₁₄`,
                                     data: xnOverTime[t],
                                     backgroundColor: chartColors[t],
-                                    borderColor: chartColors[t].replace('0.7', '1'),
+                                    borderColor: chartColors[t],//.replace('0.7', '1'),
                                     borderWidth: 2,
-                                    pointBackgroundColor: chartColors[t].replace('0.7', '1'),
+                                    pointBackgroundColor: chartColors[t],//.replace('0.7', '1'),
                                     pointRadius: 4
                                 },
                                 {
@@ -952,6 +1074,17 @@
                                     borderWidth: 1,
                                     borderDash: [5, 5],
                                     pointBackgroundColor: 'rgba(255, 99, 132, 0.8)',
+                                    pointRadius: 2,
+                                    fill: false
+                                },
+                                {
+                                    label: 'Максимальные ограничения',
+                                    data: maxC,
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    borderColor: 'rgba(100, 99, 132, 0.8)',
+                                    borderWidth: 1,
+                                    borderDash: [5, 5],
+                                    pointBackgroundColor: 'rgba(100, 99, 132, 0.8)',
                                     pointRadius: 2,
                                     fill: false
                                 }
@@ -1019,12 +1152,6 @@
             document.getElementById('calculate-btn').addEventListener('click', function() {
                 const xnOverTime = calculateXnValues();
                 createCharts(xnOverTime);
-                
-                
-                // Прокрутка к графикам
-                document.querySelector('.section:nth-last-child(2)').scrollIntoView({
-                    behavior: 'smooth'
-                });
             });
             
             document.getElementById('reset-btn').addEventListener('click', function() {
