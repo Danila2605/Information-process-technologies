@@ -453,28 +453,35 @@
                 // Таблица 3
                 const table3Body = document.getElementById('table3-body');
                 table3Body.innerHTML = '';
-                let fig = ["₁","₂","₃","₄","₅","₆","₇","₈","₉","₁₀"];
+                let figExampe = ["₁","₂","₃","₄","₅","₆","₇","₈","₉","₁₀"];
+
+                let fig = [
+                    "₂","₃","₁₀","₇","₈","₁","₆","₄","₁₀","₁",
+                    "₅","₉","₇","₁","₃","₉","₇","₂","₉","₁₀",
+                    "₈","₄","₆","₈","₉","₁","₃","₅","₄","₁",
+                    "₆","₉","₅","₆","₇","₈"
+                ];
                 // Показываем все вспомогательные функции в таблице
                 for (let i = 0; i < 36; i++) {
                     const item = table3Data[i];
                     const row = document.createElement('tr');
                     
                     row.innerHTML = `
-                        <td>f<sub>${item.id}</sub>(x${fig[i%10]}) = </td>
+                        <td>f<sub>${item.id}</sub>(x${fig[i]}) = </td>
                         <td><div style="display: flex; align-items: center; gap: 4px;">
                             <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
                                 data-index="${i}" data-coeff="a" value="${item.a}">
-                            <div>·x${fig[i%10]}³ + </div>
+                            <div>·x${fig[i]}³ + </div>
                         </div></td>
                         <td><div style="display: flex; align-items: center; gap: 4px;">
                             <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
                                 data-index="${i}" data-coeff="a" value="${item.b}">
-                            <div>·x${fig[i%10]}² + </div>
+                            <div>·x${fig[i]}² + </div>
                         </div></td>
                         <td><div style="display: flex; align-items: center; gap: 4px;">
                             <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
                                 data-index="${i}" data-coeff="a" value="${item.c}">
-                            <div>·x${fig[i%10]} + </div>
+                            <div>·x${fig[i]} + </div>
                         </div></td>
                         <td><div style="display: flex; align-items: center; gap: 4px;">
                             <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
