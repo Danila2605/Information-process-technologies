@@ -3,10 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Моделирование характеристик авиационной системы</title>
+    <title>Моделирование характеристик хранилищ данных</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjs@11.11.0/lib/browser/math.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ode.js@1.0.0/ode.min.js"></script>
     <style>
+        .chart-wrapper {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .chart-wrapper.full-width {
+            width: 100%;
+        }
+
+        .chart-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .chart-subtitle {
+            color: #666;
+            margin-bottom: 10px;
+        }
         * {
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -206,20 +230,19 @@
 </head>
 <body>
     <div class="container">
-        <h1>Моделирование авиационно-транспортная системы</h1>
-        <div class="subtitle">Ввод параметров и визуализация динамики показателей X<sub>1</sub>-X<sub>10</sub></div>
-        
-        <!-- Таблица 1: Вводимые значения Xn и максимальные значения -->
+        <h1>Моделирование показателей авиационо-транспортнной системы</h1>
+        <div class="subtitle">Ввод показателей и визуализация динамики показателей X<sub>1</sub>-X<sub>10</sub></div>
+                
+        <!-- Таблица 1: Вводимые значения Xn -->
         <div class="section">
-            <h2>Таблица 1: Начальные и максимальные значения характеристик X<sub>n</sub></h2>
-            <p>Введите начальные значения характеристик X<sub>n</sub> и их максимальные значения. X<sub>10</sub> добавлен для возможных расширений модели.</p>
+            <h2>Таблица 1: Начальные условия X<sub>n</sub></h2>
+            <p>Введите начальные условия показателей X<sub>n</sub></p>
             <table id="table1">
                 <thead>
                     <tr>
                         <th>Характеристика</th>
                         <th>Описание</th>
                         <th>Начальное значение X<sub>n</sub></th>
-                        <th>Максимальное значение</th>
                     </tr>
                 </thead>
                 <tbody id="table1-body">
@@ -227,29 +250,11 @@
                 </tbody>
             </table>
         </div>
-        
-        <!-- Таблица 2: Константные значения -->
-        <div class="section">
-            <h2>Таблица 2: Константные значения параметров модели</h2>
-            <p>Введите значения констант, используемых в уравнениях модели.</p>
-            <table id="table2">
-                <thead>
-                    <tr>
-                        <th>Параметр</th>
-                        <th>Описание</th>
-                        <th>Значение</th>
-                    </tr>
-                </thead>
-                <tbody id="table2-body">
-                    <!-- Данные будут сгенерированы JavaScript -->
-                </tbody>
-            </table>
-        </div>
-        
+              
         <!-- Таблица 3: Функции -->
         <div class="section">
-            <h2>Таблица 3: Коэффициенты функций f(x) = a*x² + b*x + c</h2>
-            <p>Введите коэффициенты для 36 функций, используемых в модели. Отображаются первые 5 функций, полный список доступен ниже.</p>
+            <h2>Таблица 2: Коэффициенты функций f(x) = a*x³ + b*x² + c*x + d</h2>
+            <p>Введите коэффициенты для 36 функций, используемых в модели.</p>
             <table id="table3">
                 <thead>
                     <tr>
@@ -257,18 +262,30 @@
                         <th>Коэффициент a</th>
                         <th>Коэффициент b</th>
                         <th>Коэффициент c</th>
+                        <th>Коэффициент d</th>
                     </tr>
                 </thead>
                 <tbody id="table3-body">
                     <!-- Данные будут сгенерированы JavaScript -->
                 </tbody>
             </table>
-            
-            <div class="function-list" id="function-list">
-                <!-- Полный список функций будет сгенерирован JavaScript -->
-            </div>
+        
         </div>
         
+        <div class="section">
+            <table id="table4">
+                <thead>
+                    <tr>
+                        <th>Параметр</th>
+                        <th>Максимальное ограничение</th>
+                    </tr>
+                </thead>
+                <tbody id="table4-body">
+                    <!-- Данные будут сгенерированы JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
         <!-- Кнопки управления -->
         <div class="button-container">
             <button id="calculate-btn">Рассчитать динамику показателей</button>
@@ -278,13 +295,15 @@
         
         <!-- Графики -->
         <div class="section">
-            <h2>Динамика характеристик X<sub>n</sub> в 5 временных точках</h2>
-            <p>Лепестковые графики показывают значения характеристик X<sub>1</sub>-X<sub>14</sub> в 5 моментов времени (t=0, t=1, t=2, t=3, t=4)</p>
+            <h2>Динамика характеристик X<sub>n</sub> в 6 временных точках</h2>
+            <p>Лепестковые графики показывают значения характеристик X<sub>1</sub>-X<sub>10</sub> в 6 моментов времени (t=0, t=0.2, t=0.4, t=0.6, t=0.8, t=1)</p>
             <div class="charts-container" id="charts-container">
                 <!-- Графики будут сгенерированы JavaScript -->
             </div>
         </div>
-        
+
+        <canvas id="myChart" width="600" height="300"></canvas>
+
         <!-- Описание уравнений -->
         <div class="section">
             <h2>Уравнения изменений характеристик X<sub>n</sub></h2>
@@ -299,7 +318,7 @@
                 <li><span class="highlight">X₇(t)</span> - среднее время тренировок на сертифицированных тренажерах дней в год</li>
                 <li><span class="highlight">X₈(t)</span> - показатель активности органов контроля за оборотом контрафакта</li>
                 <li><span class="highlight">X₉(t)</span> - повторяемость причин происшествий</li>
-                <li><span class="highlight">X₁₀(t)</span> - новые технологии</li>
+                <li><span class="highlight">X₁₀(t)</span> - Объем закупок новых самолетов в год</li>
             </ul>
         </div>
     </div>
@@ -311,28 +330,29 @@
                 "число авиационных катастроф в год",
                 "доля воздушных судов старше 15 лет процентов в год",
                 "количество нарушений и ошибок пилотов в год",
-                "количество проданных авиабилетов в год",
+                "количество проданных авиабилетов в год", 
                 "влияние человеческого фактора в происшествиях в процентах в год",
                 "влияние технического фактора в происшествиях в процентах в год",
                 "среднее время тренировок на сертифицированных тренажерах дней в год",
                 "показатель активности органов контроля за оборотом контрафакта",
                 "повторяемость причин происшествий",
-                "новые технологии"
+                "Объем закупок новых самолетов в год" 
             ];
             
             // Описания констант
             const constants = [
-                {name: "Covid", description: "условия ограничения при Covid"},
-                {name: "Price", description: "стоимость авиатоплива"},
-                {name: "For", description: "доля иностранных самолетов"},
-                {name: "Dol", description: "валютный курс доллара"},
-                {name: "Law", description: "количество нормативно-правовых актов, относящихся к авиации"}
+                {name: "(Price)", description: "стоимость авиатоплива"},
+                {name: "(For)", description: "доля иностранных самолетов"},
+                {name: "(Dol)", description: "валютный курс доллара"},
+                {name: "(Law)", description: "количество нормативно-правовых актов,относящихся к авиации"},
+                {name: "(Covid)", description: "Короновирусные ограничения"}
             ];
             
             // Инициализация данных
             let table1Data = [];
             let table2Data = [];
             let table3Data = [];
+            let table4Data = [];
             
             // Инициализация данных по умолчанию
             function initDefaultData() {
@@ -341,30 +361,41 @@
                 for (let i = 1; i < 11; i++) {
                     table1Data.push({
                         id: i,
-                        initial: i <= 14 ? (0.5 + Math.random() * 0.5).toFixed(2) : "0.00",
+                        initial: i <= 10 ? (0.5 + Math.random() * 0.3).toFixed(2) : "0.00",
                         max: (0.8 + Math.random() * 0.2).toFixed(2)
                     });
                 }
-                
-                // Таблица 2: Константные значения
+                // Таблица 2: Значения возмущения
                 table2Data = [];
                 constants.forEach((constant, index) => {
                     table2Data.push({
                         name: constant.name,
-                        value: (0.1 + Math.random() * 0.9).toFixed(2)
+                        value: (Math.random() * 0.3).toFixed(2)
                     });
                 });
                 
                 // Таблица 3: Коэффициенты функций
                 table3Data = [];
-                for (let i = 1; i <= 36; i++) {
+                for (let i = 1; i <= 150; i++) {
                     table3Data.push({
                         id: i,
-                        a: (Math.random()).toFixed(3),
-                        b: (Math.random()).toFixed(3),
-                        c: (Math.random()).toFixed(3)
+                        a: (Math.random() * 0.8).toFixed(3),
+                        b: (Math.random() * 0.8).toFixed(3),
+                        c: (Math.random() * 0.8).toFixed(3),
+                        d: (Math.random()).toFixed(3)
                     });
                 }
+                // Таблица 4:
+                table4Data = [];
+                for (let i = 0; i < 10; i++) {
+                    table4Data.push({
+                        id: i,
+                        name: "X" + (i+1),
+                        max: (0.8 + Math.random() * 0.2).toFixed(4),
+                        min: (Math.random() * 0.2).toFixed(4)
+                    });
+                }
+                
                 
                 renderTables();
             }
@@ -373,21 +404,27 @@
             function fillRandomData() {
                 // Таблица 1
                 table1Data.forEach(item => {
-                    item.initial = (Math.random()).toFixed(2);
+                    item.initial = (0.5 + Math.random() * 0.3).toFixed(2);
                     item.max = (0.7 + Math.random() * 0.3).toFixed(2);
                 });
-                
-                // Таблица 2
-                table2Data.forEach(item => {
-                    item.value = (Math.random()).toFixed(2);
-                });
-                
+                console.log(table1Data)
+
                 // Таблица 3
                 table3Data.forEach(item => {
-                    item.a = (Math.random()).toFixed(3);
-                    item.b = (Math.random()).toFixed(3);
-                    item.c = (Math.random()).toFixed(3);
+                    item.a = (Math.random() * 0.8).toFixed(3);
+                    item.b = (Math.random() * 0.8).toFixed(3);
+                    item.c = (Math.random() * 0.8).toFixed(3);
+                    item.d = (Math.random() * 0.8).toFixed(3);
                 });
+                // Таблица 4
+                for (let i = 0; i < 10; i++) {
+                    table4Data.push({
+                        id: i,
+                        name: "X" + (i),
+                        max: (0.8 + Math.random() * 0.2).toFixed(4),
+                        min: (Math.random() * 0.2).toFixed(4)
+                    });
+                }
                 
                 renderTables();
             }
@@ -407,57 +444,64 @@
                         <td>X<sub>${item.id}</sub></td>
                         <td>${xnDescriptions[descIndex]}</td>
                         <td><input type="number" step="0.01" min="0" max="1" class="xn-input" data-index="${index}" data-type="initial" value="${item.initial}"></td>
-                        <td><input type="number" step="0.01" min="0" max="1" class="xn-input" data-index="${index}" data-type="max" value="${item.max}"></td>
                     `;
                     
                     table1Body.appendChild(row);
                 });
                 
-                // Таблица 2
-                const table2Body = document.getElementById('table2-body');
-                table2Body.innerHTML = '';
-                
-                table2Data.forEach((item, index) => {
-                    const row = document.createElement('tr');
-                    
-                    row.innerHTML = `
-                        <td>${item.name}</td>
-                        <td>${constants[index].description}</td>
-                        <td><input type="number" step="0.01" min="0" max="1" class="const-input" data-index="${index}" value="${item.value}"></td>
-                    `;
-                    
-                    table2Body.appendChild(row);
-                });
-                
+                                
                 // Таблица 3
                 const table3Body = document.getElementById('table3-body');
                 table3Body.innerHTML = '';
-                
-                // Показываем все функций в таблице
+                let fig = ["₁","₂","₃","₄","₅","₆","₇","₈","₉","₁₀"];
+                // Показываем все вспомогательные функции в таблице
                 for (let i = 0; i < 36; i++) {
                     const item = table3Data[i];
                     const row = document.createElement('tr');
                     
                     row.innerHTML = `
-                        <td>f<sub>${item.id}</sub>(x)</td>
-                        <td><input type="number" step="0.001" min="0" max="10" class="func-input" data-index="${i}" data-coeff="a" value="${item.a}"></td>
-                        <td><input type="number" step="0.001" min="0" max="10" class="func-input" data-index="${i}" data-coeff="b" value="${item.b}"></td>
-                        <td><input type="number" step="0.001" min="0" max="10" class="func-input" data-index="${i}" data-coeff="c" value="${item.c}"></td>
+                        <td>f<sub>${item.id}</sub>(x${fig[i%10]}) = </td>
+                        <td><div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
+                                data-index="${i}" data-coeff="a" value="${item.a}">
+                            <div>·x${fig[i%10]}³ + </div>
+                        </div></td>
+                        <td><div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
+                                data-index="${i}" data-coeff="a" value="${item.b}">
+                            <div>·x${fig[i%10]}² + </div>
+                        </div></td>
+                        <td><div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
+                                data-index="${i}" data-coeff="a" value="${item.c}">
+                            <div>·x${fig[i%10]} + </div>
+                        </div></td>
+                        <td><div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
+                                data-index="${i}" data-coeff="a" value="${item.d}">
+                            <div></div>
+                        </div></td>
                     `;
                     
                     table3Body.appendChild(row);
                 }
+
+                // Таблица 4
+                const table4Body = document.getElementById('table4-body');
+                table4Body.innerHTML = '';
                 
-                // Полный список функций
-                const functionList = document.getElementById('function-list');
-                functionList.innerHTML = '';
-                
-                table3Data.forEach((item, index) => {
-                    const funcItem = document.createElement('div');
-                    funcItem.className = 'function-item';
-                    funcItem.innerHTML = `f<sub>${item.id}</sub>(x) = ${item.a}·x² + ${item.b}·x + ${item.c}`;
-                    functionList.appendChild(funcItem);
-                });
+                for (let i=0;i<10;i++){
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td>${table4Data[i].name}</td>
+                        <td><div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="number" step="0.001" min="0" max="10" class="max-input" style="width: 150px" 
+                        data-index="${i}" data-coeff="a" value="${table4Data[i].max}"></td>
+                    `;
+                    
+                    table4Body.appendChild(row);
+                };
                 
                 // Добавляем обработчики событий для инпутов
                 addEventListeners();
@@ -471,11 +515,6 @@
                         const index = parseInt(this.dataset.index);
                         const type = this.dataset.type;
                         table1Data[index][type] = this.value;
-                        
-                        // Обновляем список функций, если нужно
-                        if (type === 'initial' && index === 0) {
-                            updateFunctionList();
-                        }
                     });
                 });
                 
@@ -493,194 +532,254 @@
                         const index = parseInt(this.dataset.index);
                         const coeff = this.dataset.coeff;
                         table3Data[index][coeff] = this.value;
-                        
-                        // Обновляем список функций
-                        updateFunctionList();
                     });
                 });
-            }
-            
-            // Обновление списка функций
-            function updateFunctionList() {
-                const functionList = document.getElementById('function-list');
-                functionList.innerHTML = '';
-                
-                table3Data.forEach((item, index) => {
-                    const funcItem = document.createElement('div');
-                    funcItem.className = 'function-item';
-                    funcItem.innerHTML = `f<sub>${item.id}</sub>(x) = ${item.a}·x² + ${item.b}·x + ${item.c}`;
-                    functionList.appendChild(funcItem);
+
+                // Обработчики для таблицы 4
+                document.querySelectorAll('.max-input').forEach(input => {
+                    input.addEventListener('change', function() {
+                        const index = parseInt(this.dataset.index);
+                        table4Data[index].max = this.value;
+                    });
+                });
+                document.querySelectorAll('.min-input').forEach(input => {
+                    input.addEventListener('change', function() {
+                        const index = parseInt(this.dataset.index);
+                        table4Data[index].min = this.value;
+                    });
                 });
             }
 
             function FValue(n,x){
                 // Проверка входных данных
                 if (x === undefined || x === null || isNaN(x)) {
-                    console.warn(`Invalid x value for F${index}: ${x}`);
+                    console.warn(`Invalid x value for F: ${x}`);
                     return 1; // нейтральное значение
                 }
                 
-                // Ваша логика вычисления f(index, x)
-                let result = parseFloat(table3Data[n].a * x * x + table3Data[n].b * x + table3Data[n].c)
-                
-                // Пример: сигмоидальная функция
-                // result = 1 / (1 + Math.exp(-x));
+                // логика вычисления f(index, x)
+                let result = parseFloat(table3Data[n].a * x * x * x + table3Data[n].b * x * x + table3Data[n].c * x + table3Data[n].d)
                 
                 // Защита от проблем
                 if (isNaN(result) || !isFinite(result)) {
-                    console.warn(`NaN/Infinity in F${index}(${x}), returning 1`);
+                    console.warn(`NaN/Infinity in F${n}(${x}), returning 1`);
                     return 1;
                 }
                 
                 // Ограничение диапазона
-                if (result < 1e-10) result = 1e-10;
-                if (result > 1e10) result = 1e10;
+                // if (result < 1e-10) result = 1e-10;
+                // if (result > 1e10) result = 1e10;
                 
                 return result;
             }
+
             
-            // Расчет значений Xn в 5 временных точках
+
+            // Расчет значений Xn в временных точках
             function calculateXnValues() {
-                const timePoints = 5;
+                
+                        
                 const xnCount = 10; // X1-X10
+                const initialValuesX = table1Data.slice(0, xnCount).map(item => parseFloat(item.initial));
                 
-                // Получаем начальные значения Xn
-                const initialValues = table1Data.slice(0, xnCount).map(item => parseFloat(item.initial));
-                
-                // Получаем коэффициенты для вычисления
-                const Covid = parseFloat(table2Data[0].value); // Covid
-                const Price = parseFloat(table2Data[1].value);  // Price
-                const For = parseFloat(table2Data[2].value); // For
-                const Dol = parseFloat(table2Data[3].value); // Dol
-                const Law = parseFloat(table2Data[4].value); // Law
-                
-                // Массив для хранения значений Xn в 5 временных точках
-                const xnOverTime = Array.from({length: timePoints}, () => []);
-                
-                // Инициализируем начальные значения (t=0)
-                for (let i = 0; i < xnCount; i++) {
-                    xnOverTime[0][i] = initialValues[i];
+                // Дифференциальные функции изменения X1-X10
+                function cllculateX1(t, X1, othersArray){
+                    return (
+                        (price(t) + forFactor(t) + dol(t)) * FValue(0,othersArray[1]) * FValue(1,othersArray[2]) -
+                        (covid(t) + law(t)) * FValue(2,othersArray[9]) * FValue(3,othersArray[6]) * FValue(4,othersArray[7])
+                    )
+                }
+                function cllculateX2(t, X2, othersArray){
+                    return (
+                        dol(t) * FValue(5,othersArray[0]) * FValue(6,othersArray[5]) -
+                        FValue(7,othersArray[3]) * FValue(8,othersArray[9])
+                    )
+                }
+                function cllculateX3(t, X3, othersArray){
+                    return (
+                        forFactor(t) * FValue(9,othersArray[0]) * FValue(10,othersArray[4]) * FValue(11,othersArray[8]) -
+                        law(t) * FValue(12,othersArray[6])
+                    )
+                }
+                function cllculateX4(t, X4, othersArray){
+                    return (
+                        - (price(t) + dol(t) + covid(t)) * FValue(13,othersArray[0])
+                    )
+                }
+                function cllculateX5(t, X5, othersArray){
+                    return (
+                        forFactor(t) * FValue(14,othersArray[2]) * FValue(15,othersArray[8]) -
+                        law(t) * FValue(16,othersArray[6])
+                    )
+                }
+                function cllculateX6(t, X6, othersArray){
+                    return (
+                        price(t) * FValue(17,othersArray[1]) * FValue(18,othersArray[8]) -
+                        law(t) * FValue(19,othersArray[9]) * FValue(20,othersArray[7])
+                    )
+                }
+                function cllculateX7(t, X7, othersArray){
+                    return (
+                        law(t) * FValue(21,othersArray[3]) * FValue(22,othersArray[5]) * FValue(23,othersArray[7]) * FValue(24,othersArray[8]) -
+                        (price(t) + dol(t) + covid(t))
+                    )
+                }
+                function cllculateX8(t, X8, othersArray){
+                    return (
+                        law(t) - covid(t) * FValue(25,othersArray[0]) * FValue(26,othersArray[2]) * 
+                        FValue(27,othersArray[4] * FValue(28,othersArray[3]))
+                    )
+                }
+                function cllculateX9(t, X9, othersArray){
+                    return (
+                        law(t) - FValue(29,othersArray[0]) * FValue(30,othersArray[5]) * FValue(31,othersArray[8])
+                    )
+                }
+                function cllculateX10(t, X10, othersArray){
+                    return (
+                        price(t) * FValue(32,othersArray[4]) * FValue(33,othersArray[5]) - 
+                        FValue(34,othersArray[6]) * FValue(35,othersArray[7])
+                    )
                 }
                 
-                // Вычисляем значения для последующих временных точек
-                for (let t = 1; t < timePoints; t++) {
-                    for (let i = 0; i < xnCount; i++) {
-                        // Простая модель изменения Xn во времени
-                        // В реальной модели здесь использовались бы уравнения 2.9-2.21 из задания
-                        
-                        // Базовое изменение (затухание + случайные флуктуации)
-                        let change = 0;
-                        
-                        // Влияние предыдущего значения
-                        // change += const4 * xnOverTime[t-1][i];
-                        
-                        let calcVal = 1;
-                        // Влияние других переменных (упрощенная модель)
-                        switch (i){
-                            case 0:
-                                // Вычисляем новое значение X1
-                                calcVal *= (Price + For + Dol) * FValue(0,xnOverTime[t-1][1]) * FValue(1,xnOverTime[t-1][2])
 
-                                calcVal -= (Covid + Law) * FValue(2,xnOverTime[t-1][9]) * FValue(3,xnOverTime[t-1][6]) * FValue(4,xnOverTime[t-1][7])
+                function f_dopri(t, y){
+                    return [ cllculateX1(t, y[0], y), cllculateX2(t, y[1], y), cllculateX3(t, y[2], y), cllculateX4(t, y[3], y),
+                cllculateX5(t, y[4], y), cllculateX6(t, y[5], y), cllculateX7(t, y[6], y), cllculateX8(t, y[7], y),
+                cllculateX9(t, y[8], y), cllculateX10(t, y[9], y)
+                ];
+                }
 
-                                change += calcVal
-                                break;
-                            case 1:
-                                // Вычисляем новое значение X2
-                                calcVal *= (Dol) * FValue(5,xnOverTime[t-1][0]) * FValue(6,xnOverTime[t-1][5])
+                const tol = 1e-6;
 
-                                calcVal -= FValue(7,xnOverTime[t-1][3]) * FValue(8,xnOverTime[t-1][9])
+                const { solveODE } = math;
 
-                                change += calcVal
-                                break;
-                            case 2:
-                                // Вычисляем новое значение X3
-                                calcVal *= (For) * FValue(9,xnOverTime[t-1][0]) * FValue(10,xnOverTime[t-1][4]) * FValue(11,xnOverTime[t-1][8])
+                const tspan1 = [0, 1];
 
-                                calcVal -= (Law) * FValue(12,xnOverTime[t-1][6])
+                const sol1 = solveODE(f_dopri, tspan1, initialValuesX, { method: 'RK45',tol: 1e-6, firstStep: 0.2, maxStep: 0.2});
+                
+                console.log(sol1);
 
-                                change += calcVal
-                                break;
-                            case 3:
-                                // Вычисляем новое значение X4
-                                calcVal *= - (Price + Dol + Covid) * FValue(13,xnOverTime[t-1][0])
+                const timePoints = 6;
 
-                                change += calcVal
-                                break;
-                            case 4:
-                                // Вычисляем новое значение X5
-                                calcVal *= (For)* FValue(14,xnOverTime[t-1][2])* FValue(15,xnOverTime[t-1][8])
+                const xnOverTime = Array.from({length: timePoints}, () => []);
 
-                                calcVal -= (Law) * FValue(16,xnOverTime[t-1][6])
+                let count = 0;
 
-                                change += calcVal
-                                break;
-                            case 5:
-                                // Вычисляем новое значение X6
-                                calcVal *= (Price) * FValue(17,xnOverTime[t-1][1]) * FValue(18,xnOverTime[t-1][8])
-
-                                calcVal -= (Law) * FValue(19,xnOverTime[t-1][9]) * FValue(20,xnOverTime[t-1][7])
-
-                                change += calcVal
-                                break;
-                            case 6:
-                                // Вычисляем новое значение X7
-                                calcVal *= Law
-
-                                calcVal -= (Covid) * FValue(25,xnOverTime[t-1][0]) * FValue(26,xnOverTime[t-1][2]) * FValue(27,xnOverTime[t-1][4]) * FValue(28,xnOverTime[t-1][8])
-
-                                change += calcVal
-                                break;
-                            case 7:
-                                // Вычисляем новое значение X8
-                                calcVal *= Law
-
-                                calcVal -= FValue(29,xnOverTime[t-1][0]) * FValue(30,xnOverTime[t-1][5]) * FValue(31,xnOverTime[t-1][8])
-
-                                change += calcVal
-                                break;
-                            case 8:
-                                // Вычисляем новое значение X9
-                                calcVal *= Price * FValue(32,xnOverTime[t-1][4]) * FValue(33,xnOverTime[t-1][5])
-
-                                calcVal -= FValue(34,xnOverTime[t-1][6]) * FValue(35,xnOverTime[t-1][7])
-
-                                change += calcVal
-                                break;
-                            case 9:
-                                // Вычисляем новое значение X10
-                                calcVal *= Law * FValue(21,xnOverTime[t-1][3]) * FValue(22,xnOverTime[t-1][5]) * FValue(23,xnOverTime[t-1][7]) * FValue(24,xnOverTime[t-1][8])
-
-                                calcVal -= (Price + Dol + Covid) 
-
-                                change += calcVal
-                                break;
+                for (let u = 0;u<sol1.t.length;u++){
+                    if ( sol1.t[u] === 0 ||
+                    sol1.t[u]> 0.19 && sol1.t[u]<0.22 ||
+                    sol1.t[u]> 0.39 && sol1.t[u]<0.42 ||
+                    sol1.t[u]> 0.59 && sol1.t[u]<0.62 ||
+                    sol1.t[u]>= 0.8
+                    )
+                    {
+                        let val = sol1.y[count]
+                        for (let r=0;r<val.length;r++){
+                            val[r] = Math.max(val[r], parseFloat(table4Data[r].min))
+                            val[r] = Math.min(val[r], parseFloat(table4Data[r].max))
                         }
-
-                        // Вычисляем новое значение Xn
-                        let newValue = xnOverTime[t-1][i] + change * 0.07;
-
-                        // Ограничиваем максимальным значением
-                        const maxValue = parseFloat(table1Data[i].max);
-                        newValue = Math.min(maxValue, newValue);
-                        
-
-                        // Ограничиваем минимальным значением 0
-                        newValue = Math.max(0, newValue);
-                        
-                        xnOverTime[t][i] = parseFloat(newValue.toFixed(3));
+                        xnOverTime[count] = val;
+                        count++;
+                        if (count === 5) break
+                    }
+                }
+                for (let u = 0;u<sol1.t.length;u++){
+                    if ( sol1.t[u] === 1)
+                    {
+                        let val = sol1.y[count]
+                        for (let r=0;r<val.length;r++){
+                            val[r] = Math.max(val[r], parseFloat(table4Data[r].min))
+                            val[r] = Math.min(val[r], parseFloat(table4Data[r].max))
+                        }
+                        xnOverTime[5] = val
+                        break
                     }
                 }
                 
                 return xnOverTime;
             }
+
+            /////////////////
+           
+            let chart;
             
-            // Создание лепестковых графиков
-            function createRadarCharts(xnOverTime) {
+            // Создание лепестковых и линейного графиков
+            function createCharts(xnOverTime) {
+                if (chart) {
+                    chart.destroy(); // Уничтожаем предыдущий график
+                }
+
+                let selectedTimes = ['t=0 (начало)', 't=0.2', 't=0.4', 't=0.6', 't=0.8', 't=1']
+                const ctx = document.getElementById('myChart').getContext('2d');
+                
+                // Количество переменных (длина внутреннего массива)
+                const varCount = xnOverTime[0].length;
+
+                // названия временных точек
+                const labels = selectedTimes;
+
+                // набор цветов (если переменных много — цвета циклически повторяются)
+                const colors = [
+                    'red', 'blue', 'green', 'orange', 'purple',
+                    'brown', 'pink', 'cyan', 'magenta', 'olive',
+                    "LightGreen","Aqua","Khaki","SteelBlue"
+                ];
+
+                // Формируем наборы данных для Chart.js
+                let datasets = [];
+
+                for (let v = 0; v < varCount; v++) {
+
+                    // Берём все значения x_v(t_i) для переменной v
+                    const dataV = xnOverTime.map(row => row[v]);
+
+                    datasets.push({
+                        label: `X${v+1}(t)`,
+                        data: dataV,
+                        fill: false,
+                        borderColor: colors[v % colors.length],
+                        borderWidth: 2,
+                        tension: 0.2
+                    });
+                }
+
+                // Строим график
+                chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Время t'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Значение переменных'
+                                }
+                            }
+                        }
+                    }
+                });
+
+
                 const chartsContainer = document.getElementById('charts-container');
                 chartsContainer.innerHTML = '';
                 
-                const timeLabels = ['t=0 (начало)', 't=1', 't=2', 't=3', 't=4'];
+                const timeLabels = ['t=0 (начало)', 't=0.2', 't=0.4', 't=0.6', 't=0.8', 't=1'];
                 const xnLabels = Array.from({length: 10}, (_, i) => `X${i+1}`);
                 
                 // Цвета для графиков
@@ -689,11 +788,12 @@
                     'rgba(65, 105, 225, 0.7)',
                     'rgba(70, 130, 180, 0.7)',
                     'rgba(100, 149, 237, 0.7)',
-                    'rgba(30, 144, 255, 0.7)'
+                    'rgba(30, 144, 255, 0.7)',
+                    'rgba(90, 144, 255, 0.7)'
                 ];
                 
                 // Создаем 5 графиков для каждого момента времени
-                for (let t = 0; t < 5; t++) {
+                for (let t = 0; t < 6; t++) {
                     const chartWrapper = document.createElement('div');
                     chartWrapper.className = 'chart-wrapper';
                     
@@ -704,9 +804,6 @@
                     // Добавляем информацию о максимальных значениях
                     const maxInfo = document.createElement('div');
                     maxInfo.className = 'chart-subtitle';
-                    maxInfo.innerHTML = '<small>Макс. значения: X₁=' + table1Data[0].max + 
-                                        ', X₈=' + table1Data[7].max + 
-                                        ', X10=' + table1Data[9].max + '</small>';
                     
                     const canvas = document.createElement('canvas');
                     canvas.id = `chart-${t}`;
@@ -717,14 +814,17 @@
                     chartsContainer.appendChild(chartWrapper);
                     
                     // Получаем максимальные значения для каждой характеристики
-                    const maxValues = [];
                     
+
+                    const maxC = []
                     for (let i = 0; i < 10; i++) {
-                        maxValues.push(parseFloat(table1Data[i].max));
+                        maxC.push(parseFloat(table4Data[i].max));
                     }
-                    // Находим максимальное из максимальных значений для масштаба графика
-                    const overallMax = Math.max(...maxValues);
                     
+                    
+                    
+                  const overallMax = Math.max(...maxC);
+
                     // Создаем график
                     const ctx = canvas.getContext('2d');
                     new Chart(ctx, {
@@ -736,19 +836,20 @@
                                     label: `Текущие значения X₁-X₁₄`,
                                     data: xnOverTime[t],
                                     backgroundColor: chartColors[t],
-                                    borderColor: chartColors[t].replace('0.7', '1'),
+                                    borderColor: chartColors[t],//.replace('0.7', '1'),
                                     borderWidth: 2,
-                                    pointBackgroundColor: chartColors[t].replace('0.7', '1'),
+                                    pointBackgroundColor: chartColors[t],//.replace('0.7', '1'),
                                     pointRadius: 4
                                 },
+                                
                                 {
-                                    label: 'Максимальные значения',
-                                    data: maxValues,
+                                    label: 'Максимальные ограничения',
+                                    data: maxC,
                                     backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                                    borderColor: 'rgba(255, 99, 132, 0.8)',
+                                    borderColor: 'rgba(100, 99, 132, 0.8)',
                                     borderWidth: 1,
                                     borderDash: [5, 5],
-                                    pointBackgroundColor: 'rgba(255, 99, 132, 0.8)',
+                                    pointBackgroundColor: 'rgba(100, 99, 132, 0.8)',
                                     pointRadius: 2,
                                     fill: false
                                 }
@@ -773,7 +874,7 @@
                                         },
                                         callback: function(label, index) {
                                             // Добавляем максимальное значение к названию характеристики
-                                            return label + ' (max: ' + maxValues[index].toFixed(2) + ')';
+                                            return label + ' (max: ' + maxC[index].toFixed(2) + ')';
                                         }
                                     }
                                 }
@@ -810,15 +911,12 @@
                 }
             }
             
+            ////
+            ////
             // Обработчики кнопок
             document.getElementById('calculate-btn').addEventListener('click', function() {
                 const xnOverTime = calculateXnValues();
-                createRadarCharts(xnOverTime);
-                
-                // Прокрутка к графикам
-                document.querySelector('.section:nth-last-child(2)').scrollIntoView({
-                    behavior: 'smooth'
-                });
+                createCharts(xnOverTime);
             });
             
             document.getElementById('reset-btn').addEventListener('click', function() {
@@ -831,11 +929,27 @@
             
             // Инициализация при загрузке
             initDefaultData();
-            
+
+            function price(t){
+                return 0.33 * t * t + 0.26 * t + 0.41
+            }
+            function forFactor(t){
+                return (-16 * t * t - 4 * t + 87)/100
+            }
+            function dol(t){
+                return (-55 * t * t + 100 * t + 29)/ 110
+            }
+            function covid(t){
+                return (6 * t - 5) / 10
+            }
+            function law(t){
+                return (-3 * t * t + 17 * t + 21) /35
+            }
+
             // Автоматический расчет при загрузке
             setTimeout(() => {
                 const xnOverTime = calculateXnValues();
-                createRadarCharts(xnOverTime);
+                createCharts(xnOverTime);
             }, 500);
         });
     </script>
