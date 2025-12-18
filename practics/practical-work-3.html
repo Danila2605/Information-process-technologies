@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Наводнения</title>
+    <title>Эколоия</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mathjs@11.11.0/lib/browser/math.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ode.js@1.0.0/ode.min.js"></script>
@@ -230,19 +230,19 @@
 </head>
 <body>
     <div class="container">
-        <h1>Моделирование показателей наводнения</h1>
-        <div class="subtitle">Ввод показателей и визуализация динамики показателей X<sub>1</sub>-X<sub>12</sub></div>
+        <h1>Моделирование показателей хранилищ данных</h1>
+        <div class="subtitle">Ввод показателей и визуализация зависимостей CF<sub>1</sub>-CF<sub>5</sub></div>
                 
         <!-- Таблица 1: Вводимые значения Xn и максимальные значения -->
         <div class="section">
-            <h2>Таблица 1: Начальные условия и максимальные значения показателей X<sub>n</sub></h2>
-            <p>Введите начальные условия показателей X<sub>n</sub> и их максимальные показатели.</p>
+            <h2>Таблица 1: Начальные условия и максимальные значения зависимостей CF<sub>n</sub></h2>
+            <p>Введите начальные условия зависимостей CF<sub>n</sub> и их максимальные показатели.</p>
             <table id="table1">
                 <thead>
                     <tr>
                         <th>Характеристика</th>
                         <th>Описание</th>
-                        <th>Начальное значение X<sub>n</sub></th>
+                        <th>Начальное значение CF<sub>n</sub></th>
                         <th>Максимальное значение</th>
                     </tr>
                 </thead>
@@ -254,16 +254,14 @@
         
         <!-- Таблица 2: Константные значения -->
         <div class="section">
-            <h2>Таблица 2</h2>
-            <p>Введите начальные характеристики</p>
+            <h2>Таблица 2: Значения возмущений параметров модели</h2>
+            <p>Введите значения возмущений, используемых в уравнениях модели.</p>
             <table id="table2">
                 <thead>
                     <tr>
-                        <th>Характеристика</th>
-                        <th>Коэффициент a</th>
-                        <th>Коэффициент b</th>
-                        <th>Коэффициент c</th>
-                        <th>Коэффициент d</th>
+                        <th>Параметр</th>
+                        <th>Описание</th>
+                        <th>Значение</th>
                     </tr>
                 </thead>
                 <tbody id="table2-body">
@@ -274,8 +272,8 @@
         
         <!-- Таблица 3: Функции -->
         <div class="section">
-            <h2>Таблица 3: Коэффициенты функций f(x) = a*x³ + b*x² + c*x + d</h2>
-            <p>Введите коэффициенты для 150 функций, используемых в модели.</p>
+            <h2>Таблица 3: Коэффициенты функций</h2>
+            <p>Введите коэффициенты для 12 функций, используемых в модели.</p>
             <table id="table3">
                 <thead>
                     <tr>
@@ -293,7 +291,6 @@
         
         </div>
         
-        
 
         <!-- Кнопки управления -->
         <div class="button-container">
@@ -304,8 +301,8 @@
         
         <!-- Графики -->
         <div class="section">
-            <h2>Динамика характеристик X<sub>n</sub> в 5 временных точках</h2>
-            <p>Лепестковые графики показывают значения характеристик X<sub>1</sub>-X<sub>12</sub> в 5 моментов времени (t=0, t=0.2, t=0.4, t=0.6, t=0.8, t=1)</p>
+            <h2>Динамика характеристик CF<sub>n</sub> в 5 временных точках</h2>
+            <p>Лепестковые графики показывают значения характеристик в 5 моментов времени (t=0, t=0.2, t=0.4, t=0.6, t=0.8, t=1)</p>
             <div class="charts-container" id="charts-container">
                 <!-- Графики будут сгенерированы JavaScript -->
             </div>
@@ -315,23 +312,15 @@
 
         <!-- Описание уравнений -->
         <div class="section">
-            <h2>Уравнения изменений характеристик X<sub>n</sub></h2>
+            <h2>Уравнения изменений характеристик CF<sub>n</sub></h2>
             <p>Общий вид уравнений, характеризующих изменение характеристик во времени:</p>
             <ul>
-                <li><span class="highlight">X₁(t)</span> - Численность группировки сил, участвующих в аварийно-спасательных работах</li>
-                <li><span class="highlight">X₂(t)</span> - Количество жилых домов, разрушенных и поврежденных в результате наводнения</li>
-                <li><span class="highlight">X₃(t)</span> - Численность населения, эвакуированного из зоны затопления</li>
-                <li><span class="highlight">X₄(t)</span> - Количество погибших</li>
-                <li><span class="highlight">X₅(t)</span> - Протяженность железных и автомобильных дорог, оказавшихся в зоне затопления</li>
-                <li><span class="highlight">X₆(t)</span> - Количество промышленных предприятий в зоне наводнения</li>
-                <li><span class="highlight">X₇(t)</span> - Количество транспортных средств, участвующих в аварийно-спасательных работах</li>
-                <li><span class="highlight">X₈(t)</span> - Численность населения в зоне затопления</li>
-                <li><span class="highlight">X₉(t)</span> - Площадь сельскохозяйственных угодий, охваченных наводнением</li>
-                <li><span class="highlight">X₁₀(t)</span> - Количество погибших сельскохозяйственных животных</li>
-                <li><span class="highlight">X₁₁(t)</span> - Ущерб основным производственным фондам в зоне затопления</li>
-                <li><span class="highlight">X₁₂(t)</span> - Ущерб оборотным производственным фондам в зоне затопления</li>
+                <li><span class="highlight">CF₁(C)</span> - потери, связанные с ростом заболеваемости населения</li>
+                <li><span class="highlight">CF₂(C)</span> - потери сельского хозяйства от воздействия атмосферных поллютантов</li>
+                <li><span class="highlight">CF₃(C)</span> - потери от изменения природной среды</li>
+                <li><span class="highlight">CF₄(C)</span> - потери из-за ухудшения качества жизни населения в результате систематического воздействия атмосферных выбросов промышленного предприятия</li>
+                <li><span class="highlight">CF₅(C)</span> - потери предприятия, возникающие при регулировании атмосферных выбросов и оплате штрафов за нарушение экологических требований</li>
             </ul>
-            <p>Каждое уравнение включает нормировочный множитель, вспомогательные функции и учитывает влияние управляющих переменных p(t) и возмущений ζ(t).</p>
         </div>
     </div>
 
@@ -339,49 +328,46 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Описания характеристик Xn
             const xnDescriptions = [
-                "Численность группировки сил, участвующих в аварийно-спасательных работах",
-                "Количество жилых домов, разрушенных и поврежденных в результате наводнения",
-                "Численность населения, эвакуированного из зоны затопления",
-                "Количество погибших",
-                "Протяженность железных и автомобильных дорог, оказавшихся в зоне затопления",
-                "Количество промышленных предприятий в зоне наводнения",
-                "Количество транспортных средств, участвующих в аварийно-спасательных работах",
-                "Численность населения в зоне затопления",
-                "Площадь сельскохозяйственных угодий, охваченных наводнением",
-                "Количество погибших сельскохозяйственных животных",
-                "Ущерб основным производственным фондам в зоне затопления",
-                "Ущерб оборотным производственным фондам в зоне затопления"
+                "потери, связанные с ростом заболеваемости населения",
+                "потери сельского хозяйства от воздействия атмосферных поллютантов",
+                "потери от изменения природной среды",
+                "потери из-за ухудшения качества жизни населения в результате систематического воздействия атмосферных выбросов промышленного предприятия",
+                "потери предприятия, возникающие при регулировании атмосферных выбросов и оплате штрафов за нарушение экологических требований"
             ];
-            
+
             // Описания констант
             const constants = [
-                {name: "S(t)"},
-                {name: "F(t)"},
-                {name: "G(t)"},
-                {name: "T(t)"},
-                {name: "A(t)"},
-                {name: "D(t)"},
-                {name: "I(t)"},
-                {name: "P(t)"},
-                {name: "C(t)"}
+                {name: "X₁(t)", description: "износ технологического оборудования"},
+                {name: "X₂(t)", description: "возможность использования кредитных ресурсов"},
+                {name: "X₃(t)", description: "привлечение зарубежных инвесторов к развитию предприятия"},
+                {name: "X₄(t)", description: "спрос на продукцию предприятия"},
+                {name: "X₅(t)", description: "cложность найма сотрудников нужной специальности по заявленным требованиям"},
+                {name: "X₆(t)", description: "деловая репутация компании"},
+                {name: "X₇(C)", description: "повышенный уровень смога"},
+                {name: "X₈(C)", description: "высокая задымленность города из-за лесных пожаров"},
+                {name: "X₉(C)", description: "продолжительный летний антициклон"},
+                {name: "X₁₀(C)", description: "продолжительный зимний антициклон"},
+                {name: "X₁₁(C)", description: "высокая загруженность городских автомобильных магистралей"},
+                {name: "X₁₂(C)", description: "наличие крупных промышленных  предприятий металлургической, химической или горнодобывающей промышленности"},
+                {name: "X₁₃(C)", description: "эпидемиологическая ситуация в городе, где размещено промышленное предприятие"},
+                {name: "X₁₄(C)", description: "наличие санкций, влияющих на хозяйственную деятельность предприятия"}
             ];
             
             // Инициализация данных
             let table1Data = [];
             let table2Data = [];
-            let table3DataFS = [];
-            let table3DataFX = [];
+            let table3Data = [];
             let table4Data = [];
             
             // Инициализация данных по умолчанию
             function initDefaultData() {
                 // Таблица 1: Начальные и максимальные значения Xn
                 table1Data = [];
-                for (let i = 1; i < 13; i++) {
+                for (let i = 1; i <= 5; i++) {
                     table1Data.push({
                         id: i,
-                        initial: i <= 12 ? (0.5 + Math.random() * 0.3).toFixed(2) : "0.00",
-                        max: 1
+                        initial: (0.5 + Math.random() * 0.3).toFixed(2),
+                        max: (0.8 + Math.random() * 0.2).toFixed(2)
                     });
                 }
                 // Таблица 2: Значения возмущения
@@ -389,45 +375,22 @@
                 constants.forEach((constant, index) => {
                     table2Data.push({
                         name: constant.name,
-                        a: (Math.random() * 0.8).toFixed(3),
-                        b: (Math.random() * 0.8).toFixed(3),
-                        c: (Math.random() * 0.8).toFixed(3),
-                        d: (Math.random()).toFixed(3)
+                        value: (Math.random() * 0.8).toFixed(2)
                     });
                 });
                 
                 // Таблица 3: Коэффициенты функций
-                table3DataFS = [];
+                table3Data = [];
                 for (let i = 1; i <= 12; i++) {
-                    table3DataFS.push({
+                    table3Data.push({
                         id: i,
-                        a: (Math.random() * 0.8).toFixed(3),
-                        b: (Math.random() * 0.8).toFixed(3),
-                        c: (Math.random() * 0.8).toFixed(3),
+                        a: (Math.random() * 10 - 0.1).toFixed(3),
+                        b: (Math.random() * 10).toFixed(3),
+                        c: (Math.random() * 10).toFixed(3),
                         d: (Math.random()).toFixed(3)
                     });
                 }
-                table3DataFX = [];
-                for (let i = 1; i <= 21; i++) {
-                    table3DataFX.push({
-                        id: i,
-                        a: (Math.random() * 0.8).toFixed(3),
-                        b: (Math.random() * 0.8).toFixed(3),
-                        c: (Math.random() * 0.8).toFixed(3),
-                        d: (Math.random()).toFixed(3)
-                    });
-                }
-
-                // Таблица 4:
-                table4Data = [];
-                for (let i = 0; i < 14; i++) {
-                    table4Data.push({
-                        id: i,
-                        name: "X" + (i+1),
-                        max: 1,
-                        min: (Math.random() * 0.2).toFixed(4)
-                    });
-                }
+                
                 
                 
                 renderTables();
@@ -443,34 +406,17 @@
                 console.log(table1Data)
                 // Таблица 2
                 table2Data.forEach(item => {
-                    item.a = (Math.random() * 0.8).toFixed(2);
-                    item.b = (Math.random() * 0.8).toFixed(2);
-                    item.c = (Math.random() * 0.8).toFixed(2);
-                    item.d = (Math.random() * 0.8).toFixed(2);
+                    item.value = (Math.random() * 0.3).toFixed(2);
                 });
                 
                 // Таблица 3
-                table3DataFS.forEach(item => {
-                    item.a = (Math.random() * 0.8).toFixed(3);
-                    item.b = (Math.random() * 0.8).toFixed(3);
-                    item.c = (Math.random() * 0.8).toFixed(3);
-                    item.d = (Math.random() * 0.8).toFixed(3);
+                table3Data.forEach(item => {
+                    item.a = (Math.random() * 10 - 0.1).toFixed(3);
+                    item.b = (Math.random() * 10).toFixed(3);
+                    item.c = (Math.random() * 10).toFixed(3);
+                    item.d = (Math.random() * 10).toFixed(3);
                 });
-                table3DataFX.forEach(item => {
-                    item.a = (Math.random() * 0.8).toFixed(3);
-                    item.b = (Math.random() * 0.8).toFixed(3);
-                    item.c = (Math.random() * 0.8).toFixed(3);
-                    item.d = (Math.random() * 0.8).toFixed(3);
-                });
-                // Таблица 4
-                for (let i = 0; i < 14; i++) {
-                    table4Data.push({
-                        id: i,
-                        name: "X" + (i),
-                        max: 1,
-                        min: (Math.random() * 0.2).toFixed(4)
-                    });
-                }
+                
                 
                 renderTables();
             }
@@ -487,7 +433,7 @@
                     const descIndex = Math.min(index, xnDescriptions.length - 1);
                     
                     row.innerHTML = `
-                        <td>X<sub>${item.id}</sub></td>
+                        <td>CF<sub>${item.id}</sub></td>
                         <td>${xnDescriptions[descIndex]}</td>
                         <td><input type="number" step="0.01" min="0" max="1" class="xn-input" data-index="${index}" data-type="initial" value="${item.initial}"></td>
                         <td><input type="number" step="0.01" min="0" max="1" class="xn-input" data-index="${index}" data-type="max" value="${item.max}"></td>
@@ -500,31 +446,13 @@
                 const table2Body = document.getElementById('table2-body');
                 table2Body.innerHTML = '';
                 
-                table2Data.forEach((item, i) => {
+                table2Data.forEach((item, index) => {
                     const row = document.createElement('tr');
                     
                     row.innerHTML = `
                         <td>${item.name}</td>
-                        <td><div style="display: flex; align-items: center; gap: 4px;">
-                            <input type="number" step="0.001" min="0" max="10" class="func-inputT" style="width: 110px" 
-                                data-index="${i}" data-coeff="a" value="${item.a}">
-                            <div>·t³ +</div>
-                        </div></td>
-                        <td><div style="display: flex; align-items: center; gap: 4px;">
-                            <input type="number" step="0.001" min="0" max="10" class="func-inputT" style="width: 110px" 
-                                data-index="${i}" data-coeff="a" value="${item.b}">
-                            <div>·t² +</div>
-                        </div></td>
-                        <td><div style="display: flex; align-items: center; gap: 4px;">
-                            <input type="number" step="0.001" min="0" max="10" class="func-inputT" style="width: 110px" 
-                                data-index="${i}" data-coeff="a" value="${item.c}">
-                            <div>·t +</div>
-                        </div></td>
-                        <td><div style="display: flex; align-items: center; gap: 4px;">
-                            <input type="number" step="0.001" min="0" max="10" class="func-inputT" style="width: 110px" 
-                                data-index="${i}" data-coeff="a" value="${item.d}">
-                            <div></div>
-                        </div></td>
+                        <td>${constants[index].description}</td>
+                        <td><input type="number" step="0.01" min="0" max="1" class="const-input" data-index="${index}" value="${item.value}"></td>
                     `;
                     
                     table2Body.appendChild(row);
@@ -533,82 +461,39 @@
                 // Таблица 3
                 const table3Body = document.getElementById('table3-body');
                 table3Body.innerHTML = '';
-                
+
+                let fig = ["₃","₄","₅","₃","₄","₅","₅","₁","₂","₃","₅","₁"];
                 // Показываем все вспомогательные функции в таблице
                 for (let i = 0; i < 12; i++) {
-                    if (i===2 || i===3 || i === 6 || i === 11) continue;
-                    const item = table3DataFS[i];
+                    const item = table3Data[i];
                     const row = document.createElement('tr');
                     
                     row.innerHTML = `
-                        <td>f<sub>${item.id}</sub>(S(t)) = </td>
+                        <td>f<sub>${item.id}</sub>(CF${fig[i]}(C)) = </td>
                         <td><div style="display: flex; align-items: center; gap: 4px;">
-                            <input type="number" step="0.001" min="0" max="10" class="func-inputS" style="width: 110px" 
+                            <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
                                 data-index="${i}" data-coeff="a" value="${item.a}">
-                            <div>·S(t)³ +</div>
+                            <div>·x${fig[i]}³ + </div>
                         </div></td>
                         <td><div style="display: flex; align-items: center; gap: 4px;">
-                            <input type="number" step="0.001" min="0" max="10" class="func-inputS" style="width: 110px" 
+                            <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
                                 data-index="${i}" data-coeff="a" value="${item.b}">
-                            <div>·S(t)² +</div>
+                            <div>·CF${fig[i]}(C)² + </div>
                         </div></td>
                         <td><div style="display: flex; align-items: center; gap: 4px;">
-                            <input type="number" step="0.001" min="0" max="10" class="func-inputS" style="width: 110px" 
+                            <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
                                 data-index="${i}" data-coeff="a" value="${item.c}">
-                            <div>·S(t) +</div>
+                            <div>·CF${fig[i]}(C) + </div>
                         </div></td>
                         <td><div style="display: flex; align-items: center; gap: 4px;">
-                            <input type="number" step="0.001" min="0" max="10" class="func-inputS" style="width: 110px" 
+                            <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
                                 data-index="${i}" data-coeff="a" value="${item.d}">
                             <div></div>
                         </div></td>
                     `;
                     
                     table3Body.appendChild(row);
-                }
-                let fig = ["₁","₂","₃","₄","₅","₆","₇","₈","₉","₁₀","₁₁","₁₂","₁₃","₁₄"];
-
-                let v = ["1x₈","2x₈","2x₁","2x₇","3x₈","3x₁","3x₇",
-                    "4x₈", "4x₇", "4x₁", "5x₁", "5x₇", "6x₈", "7x₁",
-                    "8x₄", "9x₁", "9x₇", "10x₁", "10x₇", "11x₆", "12x₁₁"
-                ]
-
-                for (let i = 0; i < 21; i++) {
-                    console.log(table3DataFX[i])
-                    const item = table3DataFX[i];
-                    const row = document.createElement('tr');
-                    
-                    row.innerHTML = `
-                        <td>f<sub>${v[i]}</sub> = </td>
-                        <td><div style="display: flex; align-items: center; gap: 4px;">
-                            <input type="number" step="0.001" min="0" max="10" class="func-inputX" style="width: 110px" 
-                                data-index="${i}" data-coeff="a" value="${item.a}">
-                            <div>·${v[i].length <= 3?v[i].slice(1):v[i].slice(2)}³ + </div>
-                        </div></td>
-                        <td><div style="display: flex; align-items: center; gap: 4px;">
-                            <input type="number" step="0.001" min="0" max="10" class="func-inputX" style="width: 110px" 
-                                data-index="${i}" data-coeff="a" value="${item.b}">
-                            <div>·${v[i].length <= 3?v[i].slice(1):v[i].slice(2)}² + </div>
-                        </div></td>
-                        <td><div style="display: flex; align-items: center; gap: 4px;">
-                            <input type="number" step="0.001" min="0" max="10" class="func-inputX" style="width: 110px" 
-                                data-index="${i}" data-coeff="a" value="${item.c}">
-                            <div>·${v[i].length <= 3?v[i].slice(1):v[i].slice(2)} + </div>
-                        </div></td>
-                        <td><div style="display: flex; align-items: center; gap: 4px;">
-                            <input type="number" step="0.001" min="0" max="10" class="func-inputX" style="width: 110px" 
-                                data-index="${i}" data-coeff="a" value="${item.d}">
-                            <div></div>
-                        </div></td>
-                    `;
-                    
-                    table3Body.appendChild(row);
-                }
-
-                
-                
-                // Добавляем обработчики событий для инпутов
-                addEventListeners();
+                }                
             }
             
             // Добавление обработчиков событий
@@ -623,27 +508,19 @@
                 });
                 
                 // Обработчики для таблицы 2
-                document.querySelectorAll('.func-inputT').forEach(input => {
+                document.querySelectorAll('.const-input').forEach(input => {
                     input.addEventListener('change', function() {
                         const index = parseInt(this.dataset.index);
-                        const coeff = this.dataset.coeff;
-                        table2Data[index][coeff] = this.value;
+                        table2Data[index].value = this.value;
                     });
                 });
                 
                 // Обработчики для таблицы 3
-                document.querySelectorAll('.func-inputS').forEach(input => {
+                document.querySelectorAll('.func-input').forEach(input => {
                     input.addEventListener('change', function() {
                         const index = parseInt(this.dataset.index);
                         const coeff = this.dataset.coeff;
-                        table3DataFS[index][coeff] = this.value;
-                    });
-                });
-                document.querySelectorAll('.func-inputX').forEach(input => {
-                    input.addEventListener('change', function() {
-                        const index = parseInt(this.dataset.index);
-                        const coeff = this.dataset.coeff;
-                        table3DataFX[index][coeff] = this.value;
+                        table3Data[index][coeff] = this.value;
                     });
                 });
 
@@ -662,7 +539,7 @@
                 });
             }
 
-            function FSValue(n,x){
+            function FValue(n,x){
                 // Проверка входных данных
                 if (x === undefined || x === null || isNaN(x)) {
                     console.warn(`Invalid x value for F: ${x}`);
@@ -670,11 +547,11 @@
                 }
                 
                 // логика вычисления f(index, x)
-                let result = parseFloat(table3DataFS[n].a * x * x * x + table3DataFS[n].b * x * x + table3DataFS[n].c * x + table3DataFS[n].d)
+                let result = parseFloat(table3Data[n].a * x * x * x + table3Data[n].b * x * x + table3Data[n].c * x + table3Data[n].d)
                 
                 // Защита от проблем
                 if (isNaN(result) || !isFinite(result)) {
-                    console.warn(`NaN/Infinity in F${index}(${x}), returning 1`);
+                    console.warn(`NaN/Infinity in F${n}(${x}), returning 1`);
                     return 1;
                 }
                 
@@ -684,185 +561,86 @@
                 
                 return result;
             }
-            function FXValue(n,x){
-                // Проверка входных данных
-                if (x === undefined || x === null || isNaN(x)) {
-                    console.warn(`Invalid x value for F: ${x}`);
-                    return 1; // нейтральное значение
-                }
-                
-                // логика вычисления f(index, x)
-                let result = parseFloat(table3DataFX[n].a * x * x * x + table3DataFX[n].b * x * x + table3DataFX[n].c * x + table3DataFX[n].d)
-                
-                // Защита от проблем
-                if (isNaN(result) || !isFinite(result)) {
-                    console.warn(`NaN/Infinity in F${index}(${x}), returning 1`);
-                    return 1;
-                }
-                
-                // Ограничение диапазона
-                // if (result < 1e-10) result = 1e-10;
-                // if (result > 1e10) result = 1e10;
-                
-                return result;
-            }
+
             
 
             // Расчет значений Xn в временных точках
             function calculateXnValues() {
                 const maxValues = [];
-                for (let i = 0; i < 12; i++) {
+                for (let i = 0; i < 5; i++) {
                     maxValues.push(parseFloat(table1Data[i].max));
                 }
                         
-                const xnCount = 12; // X1-X14
+                const xnCount = 5; 
                 const initialValuesX = table1Data.slice(0, xnCount).map(item => parseFloat(item.initial));
                 
-                // Дифференциальные функции изменения X1-X14
-                function cllculateX1(t, X1, othersArray){
+                // Дифференциальные функции изменения 
+                function cllculateX1(t, Xt1, othersArray){
                     var calcVal = 1;
                     
-                    calcVal *= FSValue(0,S(t)) * FXValue(0,othersArray[7])
+                    calcVal *= FValue(0,othersArray[2]) * FValue(1,othersArray[3]) * (X1(t) + X4(t) + X5(t) + X7(t) + X8(t) + X9(t) + X10(t) + X11(t) + X12(t) + X13(t))
+
+                    calcVal -= FValue(2,othersArray[4]) * (X2(t) + X3(t) + X6(t) + X14(t))
 
                     maxValues[0] = Math.max(othersArray[0] + calcVal/ parseFloat(maxValues[0]), maxValues[0])
 
-                    calcVal *= (1 /  parseFloat(maxValues[0]))
+                    calcVal *= (0.1 / parseFloat(maxValues[0]))
 
                     return calcVal;
                 }
-                function cllculateX2(t, X2, othersArray){
+                function cllculateX2(t, Xt2, othersArray){
                     var calcVal = 1;
                     
-                    calcVal *= F(t) * G(t) * FSValue(1,S(t)) * FXValue(1,othersArray[7])
+                    calcVal *= FValue(3,othersArray[2]) * FValue(4,othersArray[3]) * (X1(t) + X4(t) + X9(t) + X10(t) + X12(t))
 
-                    calcVal -= FXValue(2,othersArray[0]) * FXValue(3,othersArray[6])
+                    calcVal -= FValue(5,othersArray[4]) * (X2(t) + X3(t) + X5(t) + X6(t))
 
-                    maxValues[1] = Math.max(othersArray[1] + calcVal/ parseFloat(maxValues[1]), maxValues[1])
-
-                    calcVal *= (1 /  parseFloat(maxValues[1]))
+                    calcVal *= (0.003 /  parseFloat(maxValues[1]))
 
                     return calcVal;
                 }
-                function cllculateX3(t, X3, othersArray){
+                function cllculateX3(t, Xt3, othersArray){
                     var calcVal = 1;
                     
-                    calcVal *= FXValue(4,othersArray[7]) * FXValue(5,othersArray[0]) * FXValue(6,othersArray[6])
+                    calcVal *= (X1(t) + X4(t) + X5(t) + X7(t) + X8(t) + X9(t) + X10(t) + X11(t) + X12(t))
+
+                    calcVal -= FValue(6,othersArray[4]) * (X2(t) + X3(t) + X6(t) + X14(t))
 
                     maxValues[2] = Math.max(othersArray[2] + calcVal/ parseFloat(maxValues[2]), maxValues[2])
 
-                    calcVal *= (1 /  parseFloat(maxValues[2]))
+                    calcVal *= (0.05 /  parseFloat(maxValues[2]))
 
                     return calcVal;
                 }
-                function cllculateX4(t, X4, othersArray){
+                function cllculateX4(t, Xt4, othersArray){
                     var calcVal = 1;
                     
-                    calcVal *= F(t) * G(t) * T(t) * FXValue(7,othersArray[7]) * FXValue(8,othersArray[6]) * FXValue(9,othersArray[0])
+                    calcVal *= FValue(7,othersArray[0]) * FValue(8,othersArray[1]) * FValue(9,othersArray[2]) * (X1(t) + X4(t) + X5(t) + X7(t) + X8(t) + X9(t) + X10(t) + X11(t) + X12(t) + X13(t))
+
+                    calcVal -= FValue(10,othersArray[4]) * (X2(t) + X3(t) + X6(t) + X14(t))
 
                     maxValues[3] = Math.max(othersArray[3] + calcVal/ parseFloat(maxValues[3]), maxValues[3])
 
-                    calcVal *= (1/ parseFloat(maxValues[3]))
+                    calcVal *= (0.05 / parseFloat(maxValues[3]))
 
                     return calcVal;
                 }
-                function cllculateX5(t, X5, othersArray){
+                function cllculateX5(t, Xt5, othersArray){
                     var calcVal = 1;
                     
-                    calcVal *= A(t) * FSValue(4,S(t))
+                    calcVal *= FValue(11,othersArray[0]) * (X1(t) + X5(t))
 
-                    calcVal -= FXValue(10,othersArray[0]) * FXValue(11,othersArray[6])
+                    calcVal -= (X2(t) + X3(t) + X4(t) + X6(t) + X7(t) + X8(t) + X9(t) + X10(t) + X13(t) + X14(t))
 
                     maxValues[4] = Math.max(othersArray[4] + calcVal/ parseFloat(maxValues[4]), maxValues[4])
 
-                    calcVal *= (1 / parseFloat(maxValues[4]))
+                    calcVal *= (0.05 / parseFloat(maxValues[4]))
 
                     return calcVal;
                 }
-                function cllculateX6(t, X6, othersArray){
-                    var calcVal = 1;
-                    
-                    calcVal *= FSValue(5,S(t)) * FXValue(12,othersArray[7])
-                    
-                    maxValues[5] = Math.max(othersArray[5] + calcVal/ parseFloat(maxValues[5]), maxValues[5])
-
-                    calcVal *= (1 / parseFloat(maxValues[5]))
-
-                    return calcVal;
-                }
-                function cllculateX7(t, X7, othersArray){
-                    var calcVal = 1;
-                    
-                    calcVal *= FXValue(13,othersArray[0])
-
-                    maxValues[6] = Math.max(othersArray[6] + calcVal/ parseFloat(maxValues[6]), maxValues[6])
-                    
-                    calcVal *= (1 / parseFloat(maxValues[6]))
-
-                    return calcVal;
-                }
-                function cllculateX8(t, X8, othersArray){
-                    var calcVal = 1;
-
-                    calcVal *= D(t) * FSValue(7,S(t))
-                    calcVal -= FXValue(14,othersArray[3])
-                    
-                    maxValues[7] = Math.max(othersArray[7] + calcVal/ parseFloat(maxValues[7]), maxValues[7])
-
-                    calcVal *= (1 / parseFloat(maxValues[7]))
-
-                    return calcVal;
-                }
-                function cllculateX9(t, X9, othersArray){
-                    var calcVal = 1;
-                    
-                    calcVal *= I(t) * FSValue(8,S(t)) 
-                    calcVal -= FXValue(15,othersArray[0]) * FXValue(16,othersArray[6])
-                    
-                    maxValues[8] = Math.max(othersArray[8] + calcVal/ parseFloat(maxValues[8]), maxValues[8])
-
-                    calcVal *= (1 / parseFloat(maxValues[8]))
-
-                    return calcVal;
-                }
-                function cllculateX10(t, X10, othersArray){
-                    var calcVal = 1;
-                    
-                    calcVal *= F(t) * G(t) * T(t) * FSValue(9,S(t)) * FXValue(17,othersArray[0]) * FXValue(18,othersArray[6])
-
-                    maxValues[9] = Math.max(othersArray[9] + calcVal/ parseFloat(maxValues[9]), maxValues[9])
-
-                    calcVal *= (1 / parseFloat(maxValues[9]))
-
-                    return calcVal;
-                }
-                function cllculateX11(t, X11, othersArray){
-                    var calcVal = 1;
-                    
-                    calcVal *= P(t) * C(t) * F(t) * G(t) * D(t) * FSValue(10,S(t)) * FXValue(19,othersArray[5])
-
-                    maxValues[10] = Math.max(othersArray[10] + calcVal/ parseFloat(maxValues[10]), maxValues[10])
-
-                    calcVal *= (1 / parseFloat(maxValues[10]))
-
-                    return calcVal;
-                }
-                function cllculateX12(t, X12, othersArray){
-                    var calcVal = 1;
-                    
-                    calcVal *= FXValue(20,othersArray[10])
-
-                    maxValues[11] = Math.max(othersArray[11] + calcVal/ parseFloat(maxValues[11]), maxValues[11])
-                    
-                    calcVal *= (1/ parseFloat(maxValues[11]))
-
-                    return calcVal;
-                }
-                
 
                 function f_dopri(t, y){
-                    return [ cllculateX1(t, y[0], y), cllculateX2(t, y[1], y), cllculateX3(t, y[2], y), cllculateX4(t, y[3], y),
-                cllculateX5(t, y[4], y), cllculateX6(t, y[5], y), cllculateX7(t, y[6], y), cllculateX8(t, y[7], y),
-                cllculateX9(t, y[8], y), cllculateX10(t, y[9], y), cllculateX11(t, y[10], y), cllculateX12(t, y[11], y)
+                    return [ cllculateX1(t, y[0], y), cllculateX2(t, y[1], y), cllculateX3(t, y[2], y), cllculateX4(t, y[3], y), cllculateX5(t, y[4], y)
                 ];
                 }
                 const tol = 1e-12;
@@ -889,10 +667,7 @@
                     )
                     {
                         let val = sol1.y[count]
-                        for (let r=0;r<val.length;r++){
-                            val[r] = Math.max(val[r], parseFloat(table4Data[r].min))
-                            val[r] = Math.min(val[r], parseFloat(table4Data[r].max))
-                        }
+                        
                         xnOverTime[count] = val;
                         count++;
                         if (count === 5) break
@@ -902,10 +677,7 @@
                     if ( sol1.t[u] === 1)
                     {
                         let val = sol1.y[count]
-                        for (let r=0;r<val.length;r++){
-                            val[r] = Math.max(val[r], parseFloat(table4Data[r].min))
-                            val[r] = Math.min(val[r], parseFloat(table4Data[r].max))
-                        }
+                        
                         xnOverTime[5] = val
                         break
                     }
@@ -915,14 +687,14 @@
 
                 for (let i=0;i<6;i++){
                     let max = 0
-                    for (let p=0;p<14;p++){
+                    for (let p=0;p<5;p++){
                         
                         max = Math.max(parseFloat(xnOverTime[i][p]), max)
                     }
                     maxs[i] = max
                 }
                 for (let o=0;o<6;o++){
-                    for (let d=0;d<14;d++){
+                    for (let d=0;d<5;d++){
                         if (maxs[o] > 1) xnOverTime[o][d] = parseFloat(xnOverTime[o][d]) / maxs[o]
                     }
                 }
@@ -965,7 +737,7 @@
                     const dataV = xnOverTime.map(row => row[v]);
 
                     datasets.push({
-                        label: `X${v+1}(t)`,
+                        label: `F${v+1}(CF(c))`,
                         data: dataV,
                         fill: false,
                         borderColor: colors[v % colors.length],
@@ -1010,7 +782,7 @@
                 chartsContainer.innerHTML = '';
                 
                 const timeLabels = ['t=0 (начало)', 't=0.2', 't=0.4', 't=0.6', 't=0.8', 't=1'];
-                const xnLabels = Array.from({length: 12}, (_, i) => `X${i+1}`);
+                const xnLabels = Array.from({length: 5}, (_, i) => `X${i+1}`);
                 
                 // Цвета для графиков
                 const chartColors = [
@@ -1034,9 +806,6 @@
                     // Добавляем информацию о максимальных значениях
                     const maxInfo = document.createElement('div');
                     maxInfo.className = 'chart-subtitle';
-                    maxInfo.innerHTML = '<small>Макс. значения: X₁=' + table1Data[0].max + 
-                                        ', X₈=' + table1Data[7].max + 
-                                        ', X₁2=' + table1Data[11].max + '</small>';
                     
                     const canvas = document.createElement('canvas');
                     canvas.id = `chart-${t}`;
@@ -1048,9 +817,10 @@
                     
                     // Получаем максимальные значения для каждой характеристики
                     const maxValues = [];
-                    for (let i = 0; i < 12; i++) {
+                    for (let i = 0; i < 5; i++) {
                         maxValues.push(parseFloat(table1Data[i].max));
                     }
+
                     
                     // Находим максимальное из максимальных значений для масштаба графика
                     const overallMax = Math.max(...maxValues);
@@ -1065,7 +835,7 @@
                             labels: xnLabels,
                             datasets: [
                                 {
-                                    label: `Текущие значения X₁-X₁₄`,
+                                    label: `Текущие значения CF₁-CF₁₄`,
                                     data: xnOverTime[t],
                                     backgroundColor: chartColors[t],
                                     borderColor: chartColors[t],//.replace('0.7', '1'),
@@ -1103,10 +873,10 @@
                                         font: {
                                             size: 11
                                         },
-                                        // callback: function(label, index) {
-                                        //     // Добавляем максимальное значение к названию характеристики
-                                        //     return label + ' (max: ' + maxValues[index].toFixed(2) + ')';
-                                        // }
+                                        callback: function(label, index) {
+                                            // Добавляем максимальное значение к названию характеристики
+                                            return label + ' (max: ' + maxValues[index].toFixed(2) + ')';
+                                        }
                                     }
                                 }
                             },
@@ -1166,46 +936,63 @@
                 console.log(table2Data[i].value);
             }
 
-            function S(t){
-                let coef = table2Data[0]
-                
-                return parseFloat(coef.a) * t * t * t + parseFloat(coef.b) * t * t + parseFloat(coef.c) * t + parseFloat(coef.d)
+            function X1(t){
+                return parseFloat(table2Data[0].value)
             }
-            function F(t){
-                let coef = table2Data[1]
-                
-                return parseFloat(coef.a) * t * t * t + parseFloat(coef.b) * t * t + parseFloat(coef.c) * t + parseFloat(coef.d)
+            function X2(t){
+                return parseFloat(table2Data[1].value)
             }
-            function G(t){
-                let coef = table2Data[2]
-                
-                return parseFloat(coef.a) * t * t * t + parseFloat(coef.b) * t * t + parseFloat(coef.c) * t + parseFloat(coef.d)
+            function X3(t){
+                return parseFloat(table2Data[2].value)
             }
-            function T(t){
-                let coef = table2Data[3]
-                
-                return parseFloat(coef.a) * t * t * t + parseFloat(coef.b) * t * t + parseFloat(coef.c) * t + parseFloat(coef.d)
+            function X4(t){
+                return parseFloat(table2Data[3].value)
             }
-            function A(t){
-                let coef = table2Data[4]
-                
-                return parseFloat(coef.a) * t * t * t + parseFloat(coef.b) * t * t + parseFloat(coef.c) * t + parseFloat(coef.d)
+            function X5(t){
+                return parseFloat(table2Data[4].value)
             }
-            function D(t){
-                let coef = table2Data[5]
-                
-                return parseFloat(coef.a) * t * t * t + parseFloat(coef.b) * t * t + parseFloat(coef.c) * t + parseFloat(coef.d)
+            function X6(t){
+                return parseFloat(table2Data[5].value)
             }
-            function I(t){
-                let coef = table2Data[6]
-                
-                return parseFloat(coef.a) * t * t * t + parseFloat(coef.b) * t * t + parseFloat(coef.c) * t + parseFloat(coef.d)
+            function X7(t){
+                current_sources = parseFloat(table2Data[6].value) + 0.01 * t * 100
+                z1 = current_sources
+                return Math.min(Math.max(z1, 0), 1)
             }
-            function P(t){
-                return parseFloat(table2Data[7].d)
+            function X8(t){
+                current_sources = parseFloat(table2Data[7].value) + 0.01 * t * 100
+                z1 = current_sources
+                return Math.min(Math.max(z1, 0), 1)
             }
-            function C(t){
-                return parseFloat(table2Data[8].d)
+            function X9(t){
+                current_sources = parseFloat(table2Data[8].value) + 0.01 * t * 100
+                z1 = current_sources
+                return Math.min(Math.max(z1, 0), 1)
+            }
+            function X10(t){
+                current_sources = parseFloat(table2Data[9].value) + 0.01 * t * 100
+                z1 = current_sources
+                return Math.min(Math.max(z1, 0), 1)
+            }
+            function X11(t){
+                current_sources = parseFloat(table2Data[10].value) + 0.01 * t * 100
+                z1 = current_sources
+                return Math.min(Math.max(z1, 0), 1)
+            }
+            function X12(t){
+                current_sources = parseFloat(table2Data[11].value) + 0.01 * t * 100
+                z1 = current_sources
+                return Math.min(Math.max(z1, 0), 1)
+            }
+            function X13(t){
+                current_sources = parseFloat(table2Data[12].value) + 0.01 * t * 100
+                z1 = current_sources
+                return Math.min(Math.max(z1, 0), 1)
+            }
+            function X14(t){
+                current_sources = parseFloat(table2Data[13].value) + 0.01 * t * 100
+                z1 = current_sources
+                return Math.min(Math.max(z1, 0), 1)
             }
 
             // Автоматический расчет при загрузке
