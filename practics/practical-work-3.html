@@ -7,6 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mathjs@11.11.0/lib/browser/math.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ode.js@1.0.0/ode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <style>
         .chart-wrapper {
             background: white;
@@ -315,11 +316,11 @@
             <h2>Уравнения изменений характеристик CF<sub>n</sub></h2>
             <p>Общий вид уравнений, характеризующих изменение характеристик во времени:</p>
             <ul>
-                <li><span class="highlight">CF₁(C)</span> - потери, связанные с ростом заболеваемости населения</li>
-                <li><span class="highlight">CF₂(C)</span> - потери сельского хозяйства от воздействия атмосферных поллютантов</li>
-                <li><span class="highlight">CF₃(C)</span> - потери от изменения природной среды</li>
-                <li><span class="highlight">CF₄(C)</span> - потери из-за ухудшения качества жизни населения в результате систематического воздействия атмосферных выбросов промышленного предприятия</li>
-                <li><span class="highlight">CF₅(C)</span> - потери предприятия, возникающие при регулировании атмосферных выбросов и оплате штрафов за нарушение экологических требований</li>
+                <li><span class="highlight">CF₁(C)</span> - Потери, связанные с ростом заболеваемости населения</li>
+                <li><span class="highlight">CF₂(C)</span> - Потери сельского хозяйства от воздействия атмосферных поллютантов</li>
+                <li><span class="highlight">CF₃(C)</span> - Потери от изменения природной среды</li>
+                <li><span class="highlight">CF₄(C)</span> - Потери из-за ухудшения качества жизни населения в результате систематического воздействия атмосферных выбросов промышленного предприятия</li>
+                <li><span class="highlight">CF₅(C)</span> - Потери предприятия, возникающие при регулировании атмосферных выбросов и оплате штрафов за нарушение экологических требований</li>
             </ul>
         </div>
     </div>
@@ -328,29 +329,29 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Описания характеристик Xn
             const xnDescriptions = [
-                "потери, связанные с ростом заболеваемости населения",
-                "потери сельского хозяйства от воздействия атмосферных поллютантов",
-                "потери от изменения природной среды",
-                "потери из-за ухудшения качества жизни населения в результате систематического воздействия атмосферных выбросов промышленного предприятия",
-                "потери предприятия, возникающие при регулировании атмосферных выбросов и оплате штрафов за нарушение экологических требований"
+                "Потери, связанные с ростом заболеваемости населения",
+                "Потери сельского хозяйства от воздействия атмосферных поллютантов",
+                "Потери от изменения природной среды",
+                "Потери из-за ухудшения качества жизни населения в результате систематического воздействия атмосферных выбросов промышленного предприятия",
+                "Потери предприятия, возникающие при регулировании атмосферных выбросов и оплате штрафов за нарушение экологических требований"
             ];
 
             // Описания констант
             const constants = [
-                {name: "X₁(t)", description: "износ технологического оборудования"},
-                {name: "X₂(t)", description: "возможность использования кредитных ресурсов"},
-                {name: "X₃(t)", description: "привлечение зарубежных инвесторов к развитию предприятия"},
-                {name: "X₄(t)", description: "спрос на продукцию предприятия"},
-                {name: "X₅(t)", description: "cложность найма сотрудников нужной специальности по заявленным требованиям"},
-                {name: "X₆(t)", description: "деловая репутация компании"},
-                {name: "X₇(C)", description: "повышенный уровень смога"},
-                {name: "X₈(C)", description: "высокая задымленность города из-за лесных пожаров"},
-                {name: "X₉(C)", description: "продолжительный летний антициклон"},
-                {name: "X₁₀(C)", description: "продолжительный зимний антициклон"},
-                {name: "X₁₁(C)", description: "высокая загруженность городских автомобильных магистралей"},
-                {name: "X₁₂(C)", description: "наличие крупных промышленных  предприятий металлургической, химической или горнодобывающей промышленности"},
-                {name: "X₁₃(C)", description: "эпидемиологическая ситуация в городе, где размещено промышленное предприятие"},
-                {name: "X₁₄(C)", description: "наличие санкций, влияющих на хозяйственную деятельность предприятия"}
+                {name: "X₁(t)", description: "Износ технологического оборудования"},
+                {name: "X₂(t)", description: "Возможность использования кредитных ресурсов"},
+                {name: "X₃(t)", description: "Привлечение зарубежных инвесторов к развитию предприятия"},
+                {name: "X₄(t)", description: "Спрос на продукцию предприятия"},
+                {name: "X₅(t)", description: "Сложность найма сотрудников нужной специальности по заявленным требованиям"},
+                {name: "X₆(t)", description: "Деловая репутация компании"},
+                {name: "X₇(C)", description: "Повышенный уровень смога"},
+                {name: "X₈(C)", description: "Высокая задымленность города из-за лесных пожаров"},
+                {name: "X₉(C)", description: "Продолжительный летний антициклон"},
+                {name: "X₁₀(C)", description: "Продолжительный зимний антициклон"},
+                {name: "X₁₁(C)", description: "Высокая загруженность городских автомобильных магистралей"},
+                {name: "X₁₂(C)", description: "Наличие крупных промышленных  предприятий металлургической, химической или горнодобывающей промышленности"},
+                {name: "X₁₃(C)", description: "Эпидемиологическая ситуация в городе, где размещено промышленное предприятие"},
+                {name: "X₁₄(C)", description: "Наличие санкций, влияющих на хозяйственную деятельность предприятия"}
             ];
             
             // Инициализация данных
@@ -473,17 +474,17 @@
                         <td><div style="display: flex; align-items: center; gap: 4px;">
                             <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
                                 data-index="${i}" data-coeff="a" value="${item.a}">
-                            <div>·x${fig[i]}³ + </div>
+                            <div>·C${fig[i]}³ + </div>
                         </div></td>
                         <td><div style="display: flex; align-items: center; gap: 4px;">
                             <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
                                 data-index="${i}" data-coeff="a" value="${item.b}">
-                            <div>·CF${fig[i]}(C)² + </div>
+                            <div>·C${fig[i]}² + </div>
                         </div></td>
                         <td><div style="display: flex; align-items: center; gap: 4px;">
                             <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
                                 data-index="${i}" data-coeff="a" value="${item.c}">
-                            <div>·CF${fig[i]}(C) + </div>
+                            <div>·C${fig[i]} + </div>
                         </div></td>
                         <td><div style="display: flex; align-items: center; gap: 4px;">
                             <input type="number" step="0.001" min="0" max="10" class="func-input" style="width: 150px" 
@@ -595,12 +596,14 @@
 
                     calcVal -= FValue(5,othersArray[4]) * (X2(t) + X3(t) + X5(t) + X6(t))
 
-                    calcVal *= (0.003 /  parseFloat(maxValues[1]))
+                    maxValues[1] = Math.max(othersArray[1] + calcVal/ parseFloat(maxValues[1]), maxValues[1])
+
+                    calcVal *= (0.1 /  parseFloat(maxValues[1]))
 
                     return calcVal;
                 }
                 function cllculateX3(t, Xt3, othersArray){
-                    var calcVal = 1;
+                    var calcVal = -1;
                     
                     calcVal *= (X1(t) + X4(t) + X5(t) + X7(t) + X8(t) + X9(t) + X10(t) + X11(t) + X12(t))
 
@@ -608,7 +611,7 @@
 
                     maxValues[2] = Math.max(othersArray[2] + calcVal/ parseFloat(maxValues[2]), maxValues[2])
 
-                    calcVal *= (0.05 /  parseFloat(maxValues[2]))
+                    calcVal *= (-0.01 /  parseFloat(maxValues[2]))
 
                     return calcVal;
                 }
@@ -621,7 +624,7 @@
 
                     maxValues[3] = Math.max(othersArray[3] + calcVal/ parseFloat(maxValues[3]), maxValues[3])
 
-                    calcVal *= (0.05 / parseFloat(maxValues[3]))
+                    calcVal *= (0.1 / parseFloat(maxValues[3]))
 
                     return calcVal;
                 }
@@ -634,13 +637,13 @@
 
                     maxValues[4] = Math.max(othersArray[4] + calcVal/ parseFloat(maxValues[4]), maxValues[4])
 
-                    calcVal *= (0.05 / parseFloat(maxValues[4]))
+                    calcVal *= (-0.05 / parseFloat(maxValues[4]))
 
                     return calcVal;
                 }
 
                 function f_dopri(t, y){
-                    return [ cllculateX1(t, y[0], y), cllculateX2(t, y[1], y), cllculateX3(t, y[2], y), cllculateX4(t, y[3], y), cllculateX5(t, y[4], y)
+                    return [ cllculateX1(t, y[0], initialValuesX), cllculateX2(t, y[1], initialValuesX), cllculateX3(t, y[2], initialValuesX), cllculateX4(t, y[3], initialValuesX), cllculateX5(t, y[4], initialValuesX)
                 ];
                 }
                 const tol = 1e-12;
@@ -659,18 +662,13 @@
                 let count = 0;
 
                 for (let u = 0;u<sol1.t.length;u++){
-                    if ( sol1.t[u] === 0 ||
-                    sol1.t[u]> 0.19 && sol1.t[u]<0.200001 ||
-                    sol1.t[u]> 0.39 && sol1.t[u]<0.41 ||
-                    sol1.t[u]> 0.59 && sol1.t[u]<0.61 ||
-                    sol1.t[u]>= 0.8
-                    )
+                    
                     {
                         let val = sol1.y[count]
                         
                         xnOverTime[count] = val;
                         count++;
-                        if (count === 5) break
+                        if (count === 10) break
                     }
                 }
                 for (let u = 0;u<sol1.t.length;u++){
@@ -756,8 +754,31 @@
                     options: {
                         responsive: true,
                         plugins: {
-                            legend: {
-                                position: 'right',
+                            // legend: {
+                            //     position: 'right',
+                            // },
+                            datalabels: {
+                                display: function(context) {
+                                    // Показывать метки только для последней точки
+                                    return true
+                                },
+                                color: function(context) {
+                                    // Цвет текста такой же как цвет линии
+                                    return context.dataset.borderColor;
+                                },
+                                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                borderRadius: 4,
+                                paddingRight: 20,
+                                font: {
+                                    weight: 'bold',
+                                    size: 15
+                                },
+                                formatter: function(value, context) {
+                                    // Показывать название датасета
+                                    return context.dataset.label;
+                                },
+                                align: 'end',
+                                anchor: 'center'
                             }
                         },
                         scales: {
@@ -774,7 +795,8 @@
                                 }
                             }
                         }
-                    }
+                    },
+                    plugins: [ChartDataLabels] // Регистрируем плагин
                 });
 
 
@@ -835,7 +857,7 @@
                             labels: xnLabels,
                             datasets: [
                                 {
-                                    label: `Текущие значения CF₁-CF₁₄`,
+                                    label: `Текущие значения CF₁-CF5`,
                                     data: xnOverTime[t],
                                     backgroundColor: chartColors[t],
                                     borderColor: chartColors[t],//.replace('0.7', '1'),
@@ -875,7 +897,7 @@
                                         },
                                         callback: function(label, index) {
                                             // Добавляем максимальное значение к названию характеристики
-                                            return label + ' (max: ' + maxValues[index].toFixed(2) + ')';
+                                            return   'CF (max: ' + maxValues[index].toFixed(2) + ')';
                                         }
                                     }
                                 }
